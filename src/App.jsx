@@ -100,6 +100,213 @@ const btnDanger =
 const inputBase =
   "w-full mt-1 px-3 py-2 rounded-xl border border-neutral-200 bg-white focus:outline-none focus:ring-2 focus:ring-lime-400/25 focus:border-neutral-300";
 
+// ---------- Normalized top actions (mobile grid) ----------
+const ACTION_BASE =
+  "print:hidden h-10 w-full rounded-xl text-sm font-medium border transition shadow-sm active:translate-y-[1px] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center";
+
+function ActionButton({ children, onClick, tone = "default", disabled, title }) {
+  const cls =
+    tone === "primary"
+      ? "bg-neutral-900 hover:bg-neutral-800 text-white border-neutral-900"
+      : tone === "danger"
+      ? "bg-red-50 hover:bg-red-100 text-red-700 border-red-200"
+      : "bg-white hover:bg-neutral-50 text-neutral-900 border-neutral-200";
+
+  return (
+    <button type="button" onClick={onClick} disabled={disabled} title={title} className={`${ACTION_BASE} ${cls}`}>
+      {children}
+    </button>
+  );
+}
+
+function ActionFileButton({ children, onFile, accept = "application/json", tone = "primary", title }) {
+  const cls =
+    tone === "primary"
+      ? "bg-neutral-900 hover:bg-neutral-800 text-white border-neutral-900"
+      : "bg-white hover:bg-neutral-50 text-neutral-900 border-neutral-200";
+
+  return (
+    <label title={title} className={`${ACTION_BASE} ${cls} cursor-pointer`}>
+      <span>{children}</span>
+      <input
+        type="file"
+        accept={accept}
+        className="hidden"
+        onChange={(e) => {
+          const file = e.target.files?.[0] || null;
+          onFile?.(file);
+          e.target.value = "";
+        }}
+      />
+    </label>
+  );
+}
+
+// ---------- Help icon pinned far-right ----------
+function HelpIconButton({ onClick, title = "Help", className = "" }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      title={title}
+      aria-label={title}
+      className={
+        "print:hidden h-10 w-10 shrink-0 rounded-xl border border-neutral-200 bg-white shadow-sm " +
+        "hover:bg-neutral-50 active:translate-y-[1px] transition flex items-center justify-center " +
+        "focus:outline-none focus:ring-2 focus:ring-lime-400/25 focus:border-neutral-300 " +
+        className
+      }
+    >
+      <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M9.1 9a3 3 0 1 1 5.8 1c0 2-3 2-3 4" />
+        <path d="M12 17h.01" />
+        <path d="M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0z" />
+      </svg>
+    </button>
+  );
+}
+
+// ---------- Help Pack v1 (Canonical) ----------
+function HelpModal({ open, onClose, appName = "ToolStack App", storageKey = "(unknown)", actions = [] }) {
+  if (!open) return null;
+
+  const Section = ({ title, children }) => (
+    <section className="space-y-2">
+      <h3 className="text-sm font-semibold text-neutral-900">{title}</h3>
+      <div className="text-sm text-neutral-700 leading-relaxed space-y-2">{children}</div>
+    </section>
+  );
+
+  const Bullet = ({ children }) => <li className="ml-4 list-disc">{children}</li>;
+
+  const ActionRow = ({ name, desc }) => (
+    <div className="flex items-start justify-between gap-4 py-2 border-b border-neutral-100 last:border-b-0">
+      <div className="text-sm font-medium text-neutral-900">{name}</div>
+      <div className="text-sm text-neutral-600 text-right">{desc}</div>
+    </div>
+  );
+
+  const baseActions = [
+    { name: "Preview", desc: "Shows a clean report sheet inside the app (print-safe)." },
+    { name: "Print / Save PDF", desc: "Uses your browser print dialog to print or save a PDF." },
+    { name: "Export", desc: "Downloads a JSON backup file of your saved data." },
+    { name: "Import", desc: "Loads a JSON backup file and replaces the current saved data." },
+  ];
+
+  const extra = (actions || []).map((a) => ({
+    name: a,
+    desc: String(a).toLowerCase().includes("csv")
+      ? "Downloads a CSV export for spreadsheets (Excel/Sheets)."
+      : "Extra tool for this app.",
+  }));
+
+  return (
+    <div className="fixed inset-0 z-50">
+      <div className="absolute inset-0 bg-black/50" onClick={onClose} aria-hidden="true" />
+      <div className="absolute inset-0 flex items-center justify-center p-4 sm:p-8">
+        <div className="w-full max-w-2xl rounded-2xl border border-neutral-200 bg-white shadow-xl overflow-hidden">
+          <div className="p-4 border-b border-neutral-100 flex items-start justify-between gap-4">
+            <div>
+              <div className="text-sm text-neutral-500">ToolStack • Help Pack v1</div>
+              <h2 className="text-lg font-semibold text-neutral-900">{appName} — how your data works</h2>
+              <div className="mt-3 h-[2px] w-56 rounded-full bg-gradient-to-r from-lime-400/0 via-lime-400 to-emerald-400/0" />
+            </div>
+
+            <button
+              type="button"
+              className="print:hidden px-3 py-2 rounded-xl text-sm font-medium border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-900 transition"
+              onClick={onClose}
+            >
+              Close
+            </button>
+          </div>
+
+          <div className="p-4 space-y-5 max-h-[70vh] overflow-auto">
+            <Section title="Quick start (daily use)">
+              <ul className="space-y-1">
+                <Bullet>Use the app normally — it autosaves as you type.</Bullet>
+                <Bullet>
+                  Use <b>Preview</b> → then <b>Print / Save PDF</b> for a clean report.
+                </Bullet>
+                <Bullet>
+                  Use <b>Export</b> regularly to create backups.
+                </Bullet>
+              </ul>
+            </Section>
+
+            <Section title="Where your data lives (important)">
+              <p>
+                Your data is saved automatically in your browser on <b>this device</b> using local storage (localStorage).
+              </p>
+              <ul className="space-y-1">
+                <Bullet>No login is required (for now).</Bullet>
+                <Bullet>If you switch device/browser/profile, your data will not follow automatically.</Bullet>
+              </ul>
+            </Section>
+
+            <Section title="Backup routine (recommended)">
+              <ul className="space-y-1">
+                <Bullet>
+                  Export after major changes, or at least <b>weekly</b>.
+                </Bullet>
+                <Bullet>Keep 2–3 older exports as a fallback.</Bullet>
+                <Bullet>Save exports somewhere safe (Drive/Dropbox/OneDrive) or email them to yourself.</Bullet>
+              </ul>
+            </Section>
+
+            <Section title="Restore / move to a new device (Import)">
+              <p>
+                On a new device/browser (or after clearing site data), use <b>Import</b> and select your latest exported JSON.
+              </p>
+              <ul className="space-y-1">
+                <Bullet>Import replaces the current saved data with the file’s contents.</Bullet>
+                <Bullet>If an import fails, try an older export (versions can differ).</Bullet>
+              </ul>
+            </Section>
+
+            <Section title="Buttons glossary (same meaning across ToolStack)">
+              <div className="rounded-2xl border border-neutral-200 bg-white px-3">
+                {[...baseActions, ...extra].map((a) => (
+                  <ActionRow key={a.name} name={a.name} desc={a.desc} />
+                ))}
+              </div>
+            </Section>
+
+            <Section title="What can erase local data">
+              <ul className="space-y-1">
+                <Bullet>Clearing browser history / site data.</Bullet>
+                <Bullet>Private/incognito mode.</Bullet>
+                <Bullet>Some “cleanup/optimizer” tools.</Bullet>
+                <Bullet>Reinstalling the browser or using a different browser profile.</Bullet>
+              </ul>
+            </Section>
+
+            <Section title="Storage key (for troubleshooting)">
+              <div className="rounded-2xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-sm text-neutral-700">
+                <span className="font-medium">localStorage key:</span> <span className="font-mono">{storageKey}</span>
+              </div>
+            </Section>
+
+            <Section title="Privacy">
+              <p>By default, your data stays on your device. It only leaves your device if you export it or share it yourself.</p>
+            </Section>
+          </div>
+
+          <div className="p-4 border-t border-neutral-100 flex items-center justify-end gap-2">
+            <button
+              type="button"
+              className="print:hidden px-3 py-2 rounded-xl text-sm font-medium border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-900 transition"
+              onClick={onClose}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // --- storage ---
 function migrateIfNeeded() {
   // Placeholder for future migrations.
@@ -196,7 +403,7 @@ export default function App() {
   const [state, setState] = useState(loadState());
 
   const [previewOpen, setPreviewOpen] = useState(false);
-  const importRef = useRef(null);
+  const [helpOpen, setHelpOpen] = useState(false);
 
   const [toast, setToast] = useState(null);
   const toastTimer = useRef(null);
@@ -446,6 +653,7 @@ export default function App() {
   };
 
   const importJSON = (file) => {
+    if (!file) return;
     const reader = new FileReader();
     reader.onload = () => {
       try {
@@ -463,15 +671,7 @@ export default function App() {
   };
 
   const exportCSV = () => {
-    const header = [
-      "date",
-      "start",
-      "end",
-      "breakMins",
-      "workMins",
-      "workHours",
-      "note",
-    ];
+    const header = ["date", "start", "end", "breakMins", "workMins", "workHours", "note"];
 
     const esc = (v) => {
       const s = String(v ?? "");
@@ -502,10 +702,10 @@ export default function App() {
 
   const openPreview = () => setPreviewOpen(true);
 
-  const printFromPreview = () => {
-    // Ensure preview is open so print CSS isolates the sheet
+  // IMPORTANT FIX: top bar "Print / Save PDF" prints ONLY the preview sheet
+  const printFromTop = () => {
     setPreviewOpen(true);
-    setTimeout(() => window.print(), 50);
+    setTimeout(() => window.print(), 60);
   };
 
   const moduleManifest = useMemo(
@@ -541,6 +741,14 @@ export default function App() {
         `}</style>
       ) : null}
 
+      <HelpModal
+        open={helpOpen}
+        onClose={() => setHelpOpen(false)}
+        appName="Overtime-It"
+        storageKey={KEY}
+        actions={["Export CSV"]}
+      />
+
       {/* Preview Modal */}
       {previewOpen ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8">
@@ -551,13 +759,13 @@ export default function App() {
               <div className="text-lg font-semibold text-white">Print preview</div>
               <div className="flex items-center gap-2">
                 <button
-                  className="px-3 py-2 rounded-xl text-sm font-medium border border-white/40 bg-white/10 hover:bg-white/15 text-white transition"
+                  className="px-3 py-2 rounded-xl text-sm font-medium border border-white/40 bg-white/10 hover:bg-white/20 text-white transition"
                   onClick={() => window.print()}
                 >
                   Print / Save PDF
                 </button>
                 <button
-                  className="px-3 py-2 rounded-xl text-sm font-medium border border-white/40 bg-white/10 hover:bg-white/15 text-white transition"
+                  className="px-3 py-2 rounded-xl text-sm font-medium border border-white/40 bg-white/10 hover:bg-white/20 text-white transition"
                   onClick={() => setPreviewOpen(false)}
                 >
                   Close
@@ -584,7 +792,7 @@ export default function App() {
 
       <div className="max-w-6xl mx-auto p-4 sm:p-6">
         {/* Header */}
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <div className="text-2xl font-semibold tracking-tight">Overtime-It</div>
             <div className="text-sm text-neutral-600">
@@ -593,33 +801,21 @@ export default function App() {
             <div className="mt-3 h-[2px] w-80 rounded-full bg-gradient-to-r from-lime-400/0 via-lime-400 to-emerald-400/0" />
           </div>
 
-          <div className="flex flex-wrap gap-2 justify-end">
-            <button className={btnSecondary} onClick={openPreview}>
-              Preview
-            </button>
-            <button className={btnSecondary} onClick={printFromPreview}>
-              Print / Save PDF
-            </button>
-            <button className={btnSecondary} onClick={exportCSV}>
-              Export CSV
-            </button>
-            <button className={btnSecondary} onClick={exportJSON}>
-              Export
-            </button>
-            <button className={btnPrimary} onClick={() => importRef.current?.click()}>
-              Import
-            </button>
-            <input
-              ref={importRef}
-              type="file"
-              accept="application/json"
-              className="hidden"
-              onChange={(e) => {
-                const f = e.target.files?.[0];
-                if (f) importJSON(f);
-                e.target.value = "";
-              }}
-            />
+          {/* Top actions + pinned help icon */}
+          <div className="w-full sm:w-[860px] relative">
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-5 pr-12">
+              <ActionButton onClick={openPreview}>Preview</ActionButton>
+              <ActionButton onClick={printFromTop}>Print / Save PDF</ActionButton>
+              <ActionButton onClick={exportCSV}>Export CSV</ActionButton>
+              <ActionButton onClick={exportJSON}>Export</ActionButton>
+              <ActionFileButton onFile={(f) => importJSON(f)} tone="primary">
+                Import
+              </ActionFileButton>
+            </div>
+
+            <div className="absolute right-0 top-0">
+              <HelpIconButton onClick={() => setHelpOpen(true)} />
+            </div>
           </div>
         </div>
 
@@ -684,7 +880,9 @@ export default function App() {
                   <div className="text-lg font-semibold text-neutral-900">{fmtHours(totals.overtime)}</div>
                 </div>
                 <div className="mt-1 text-xs text-neutral-600">
-                  Expected: <span className="font-medium text-neutral-900">{fmtHours(totals.expected)}</span> · Balance: <span className="font-medium text-neutral-900">{fmtHours(Math.abs(totals.balance))}</span> {totals.balance >= 0 ? "over" : "under"}
+                  Expected: <span className="font-medium text-neutral-900">{fmtHours(totals.expected)}</span> · Balance:{" "}
+                  <span className="font-medium text-neutral-900">{fmtHours(Math.abs(totals.balance))}</span>{" "}
+                  {totals.balance >= 0 ? "over" : "under"}
                 </div>
               </div>
 
@@ -786,13 +984,9 @@ export default function App() {
                 <div className="font-semibold">{editingId ? "Edit entry" : "Add overtime entry"}</div>
                 <div className="text-sm text-neutral-600">
                   Computed work: <span className="font-semibold">{fmtHours(computedWorkMins)}</span>
-                  {state.settings.roundingStep ? (
-                    <span className="text-neutral-500"> · rounded to {state.settings.roundingStep}m</span>
-                  ) : null}
+                  {state.settings.roundingStep ? <span className="text-neutral-500"> · rounded to {state.settings.roundingStep}m</span> : null}
                 </div>
-                {isMonthLocked ? (
-                  <div className="text-xs text-red-700 mt-1">Month is locked — edits are disabled.</div>
-                ) : null}
+                {isMonthLocked ? <div className="text-xs text-red-700 mt-1">Month is locked — edits are disabled.</div> : null}
               </div>
 
               <div className="flex flex-wrap gap-2 justify-end">
@@ -860,7 +1054,8 @@ export default function App() {
                 <div>
                   <div className="font-semibold">Entries</div>
                   <div className="text-sm text-neutral-600">
-                    Total work: <span className="font-semibold">{fmtHours(totals.totalWork)}</span> <span className="text-neutral-500">(breaks {fmtHours(totals.totalBreak)})</span>
+                    Total work: <span className="font-semibold">{fmtHours(totals.totalWork)}</span>{" "}
+                    <span className="text-neutral-500">(breaks {fmtHours(totals.totalBreak)})</span>
                   </div>
                 </div>
 
@@ -933,7 +1128,9 @@ export default function App() {
           <a className="underline hover:text-neutral-900" href={HUB_URL} target="_blank" rel="noreferrer">
             Return to ToolStack hub
           </a>
-          <div className="text-xs text-neutral-500">Storage key: <span className="font-mono">{KEY}</span></div>
+          <div className="text-xs text-neutral-500">
+            Storage key: <span className="font-mono">{KEY}</span>
+          </div>
         </div>
 
         {toast ? (
@@ -978,7 +1175,9 @@ function ReportSheet({ profile, month, useRange, range, totals, entries, storage
         <div className="rounded-2xl border border-neutral-200 p-4">
           <div className="text-sm text-neutral-600">Overtime</div>
           <div className="text-lg font-semibold text-neutral-900 mt-1">{fmtHours(totals.overtime)}</div>
-          <div className="text-xs text-neutral-600">Total work {fmtHours(totals.totalWork)} · Days {totals.daysLogged}</div>
+          <div className="text-xs text-neutral-600">
+            Total work {fmtHours(totals.totalWork)} · Days {totals.daysLogged}
+          </div>
         </div>
       </div>
 
@@ -999,7 +1198,9 @@ function ReportSheet({ profile, month, useRange, range, totals, entries, storage
           </div>
           <div>
             <div className="text-neutral-600">Balance</div>
-            <div className="font-semibold text-neutral-900">{fmtHours(Math.abs(totals.balance))} {totals.balance >= 0 ? "over" : "under"}</div>
+            <div className="font-semibold text-neutral-900">
+              {fmtHours(Math.abs(totals.balance))} {totals.balance >= 0 ? "over" : "under"}
+            </div>
           </div>
         </div>
       </div>
