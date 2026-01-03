@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 
-// ToolStack — Overtime-It — Upgraded MVP (Styled v1: light neutral + lime accent)
+// ToolStack — Overtime-It — Upgraded MVP (UI Lock: Check-It master)
 // Paste into: src/App.jsx
 // Requires: Tailwind v4 configured.
 
@@ -90,11 +90,11 @@ const endOfMonthISO = (ym) => {
   return d.toISOString().slice(0, 10);
 };
 
-// --- UI tokens (Styled v1) ---
+// --- UI tokens (Check-It master) ---
 const btnSecondary =
   "px-3 py-2 rounded-xl bg-white border border-neutral-200 shadow-sm hover:bg-neutral-50 active:translate-y-[1px] transition disabled:opacity-50 disabled:cursor-not-allowed";
 const btnPrimary =
-  "px-3 py-2 rounded-xl bg-neutral-900 text-white border border-neutral-900 shadow-sm hover:bg-neutral-800 active:translate-y-[1px] transition disabled:opacity-50 disabled:cursor-not-allowed";
+  "px-3 py-2 rounded-xl bg-neutral-700 text-white border border-neutral-700 shadow-sm hover:bg-neutral-600 active:translate-y-[1px] transition disabled:opacity-50 disabled:cursor-not-allowed";
 const btnDanger =
   "px-3 py-2 rounded-xl bg-red-50 text-red-700 border border-red-200 shadow-sm hover:bg-red-100 active:translate-y-[1px] transition disabled:opacity-50 disabled:cursor-not-allowed";
 const inputBase =
@@ -107,10 +107,10 @@ const ACTION_BASE =
 function ActionButton({ children, onClick, tone = "default", disabled, title }) {
   const cls =
     tone === "primary"
-      ? "bg-neutral-900 hover:bg-neutral-800 text-white border-neutral-900"
+      ? "bg-neutral-700 hover:bg-neutral-600 text-white border-neutral-700"
       : tone === "danger"
       ? "bg-red-50 hover:bg-red-100 text-red-700 border-red-200"
-      : "bg-white hover:bg-neutral-50 text-neutral-900 border-neutral-200";
+      : "bg-white hover:bg-neutral-50 text-neutral-700 border-neutral-200";
 
   return (
     <button type="button" onClick={onClick} disabled={disabled} title={title} className={`${ACTION_BASE} ${cls}`}>
@@ -122,8 +122,8 @@ function ActionButton({ children, onClick, tone = "default", disabled, title }) 
 function ActionFileButton({ children, onFile, accept = "application/json", tone = "primary", title }) {
   const cls =
     tone === "primary"
-      ? "bg-neutral-900 hover:bg-neutral-800 text-white border-neutral-900"
-      : "bg-white hover:bg-neutral-50 text-neutral-900 border-neutral-200";
+      ? "bg-neutral-700 hover:bg-neutral-600 text-white border-neutral-700"
+      : "bg-white hover:bg-neutral-50 text-neutral-700 border-neutral-200";
 
   return (
     <label title={title} className={`${ACTION_BASE} ${cls} cursor-pointer`}>
@@ -157,11 +157,7 @@ function HelpIconButton({ onClick, title = "Help", className = "" }) {
         className
       }
     >
-      <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M9.1 9a3 3 0 1 1 5.8 1c0 2-3 2-3 4" />
-        <path d="M12 17h.01" />
-        <path d="M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0z" />
-      </svg>
+      <span className="text-lg font-black text-neutral-800">?</span>
     </button>
   );
 }
@@ -310,9 +306,6 @@ function HelpModal({ open, onClose, appName = "ToolStack App", storageKey = "(un
 // --- storage ---
 function migrateIfNeeded() {
   // Placeholder for future migrations.
-  // Example:
-  // const legacy = localStorage.getItem("toolstack_overtime_it_v0");
-  // if (legacy && !localStorage.getItem(KEY)) localStorage.setItem(KEY, legacy);
 }
 
 function loadProfile() {
@@ -345,14 +338,11 @@ function normalizeState(raw) {
 
   const s = raw && typeof raw === "object" ? raw : base;
 
-  // legacy support: { entries: [] }
   const entries = Array.isArray(s.entries) ? s.entries : [];
-
   const ui = { ...base.ui, ...(s.ui || {}) };
   const settings = { ...base.settings, ...(s.settings || {}) };
   const lockedMonths = Array.isArray(s.lockedMonths) ? s.lockedMonths.filter(Boolean) : [];
 
-  // sanitize entries
   const cleanEntries = entries
     .filter(Boolean)
     .map((e) => ({
@@ -367,7 +357,6 @@ function normalizeState(raw) {
       updatedAt: e.updatedAt || null,
     }));
 
-  // keep UI dates coherent with month
   if (!ui.activeMonth) ui.activeMonth = monthKey();
   if (!ui.filterFrom) ui.filterFrom = startOfMonthISO(ui.activeMonth);
   if (!ui.filterTo) ui.filterTo = endOfMonthISO(ui.activeMonth);
@@ -440,7 +429,7 @@ export default function App() {
       const nextDate = ym === monthKey(new Date()) ? isoToday() : `${ym}-01`;
       setDate(nextDate);
     }
-    // also align range defaults
+
     setState((s) => {
       const u = s.ui || {};
       if (u.filterFrom?.slice(0, 7) === ym && u.filterTo?.slice(0, 7) === ym) return s;
@@ -509,7 +498,6 @@ export default function App() {
     setEnd("");
     setBreakMins(0);
     setNote("");
-    // keep date as-is
   };
 
   const presetNormalDay = () => {
@@ -528,7 +516,6 @@ export default function App() {
     setEnd(last.end || "");
     setBreakMins(clamp(toNumber(last.breakMins), 0, 24 * 60));
     setNote(last.note || "");
-    // keep date (usually today)
     notify("Copied last entry fields");
   };
 
@@ -702,25 +689,14 @@ export default function App() {
 
   const openPreview = () => setPreviewOpen(true);
 
-  // IMPORTANT FIX: top bar "Print / Save PDF" prints ONLY the preview sheet
+  // IMPORTANT: top bar "Print / Save PDF" prints ONLY the preview sheet
   const printFromTop = () => {
     setPreviewOpen(true);
     setTimeout(() => window.print(), 60);
   };
 
-  const moduleManifest = useMemo(
-    () => ({
-      id: APP_ID,
-      name: "Overtime-It",
-      version: APP_VERSION,
-      storageKeys: [KEY, PROFILE_KEY],
-      exports: ["print", "json", "csv"],
-    }),
-    []
-  );
-
   return (
-    <div className="min-h-screen bg-neutral-50 text-neutral-900">
+    <div className="min-h-screen bg-neutral-50 text-neutral-800">
       <style>{`
         @media print {
           body { background: white !important; }
@@ -741,13 +717,7 @@ export default function App() {
         `}</style>
       ) : null}
 
-      <HelpModal
-        open={helpOpen}
-        onClose={() => setHelpOpen(false)}
-        appName="Overtime-It"
-        storageKey={KEY}
-        actions={["Export CSV"]}
-      />
+      <HelpModal open={helpOpen} onClose={() => setHelpOpen(false)} appName="Overtime-It" storageKey={KEY} actions={["Export CSV"]} />
 
       {/* Preview Modal */}
       {previewOpen ? (
@@ -755,25 +725,19 @@ export default function App() {
           <div className="absolute inset-0 bg-black/40" onClick={() => setPreviewOpen(false)} />
 
           <div className="relative w-full max-w-5xl">
-            <div className="flex items-center justify-between gap-3 mb-3">
-              <div className="text-lg font-semibold text-white">Print preview</div>
+            <div className="mb-3 rounded-2xl bg-white border border-neutral-200 shadow-sm p-3 flex items-center justify-between gap-3">
+              <div className="text-lg font-semibold text-neutral-800">Print preview</div>
               <div className="flex items-center gap-2">
-                <button
-                  className="px-3 py-2 rounded-xl text-sm font-medium border border-white/40 bg-white/10 hover:bg-white/20 text-white transition"
-                  onClick={() => window.print()}
-                >
+                <button className={btnSecondary} onClick={() => window.print()}>
                   Print / Save PDF
                 </button>
-                <button
-                  className="px-3 py-2 rounded-xl text-sm font-medium border border-white/40 bg-white/10 hover:bg-white/20 text-white transition"
-                  onClick={() => setPreviewOpen(false)}
-                >
+                <button className={btnPrimary} onClick={() => setPreviewOpen(false)}>
                   Close
                 </button>
               </div>
             </div>
 
-            <div className="rounded-2xl bg-white border border-neutral-200 shadow-lg overflow-auto max-h-[80vh]">
+            <div className="rounded-2xl bg-white border border-neutral-200 shadow-xl overflow-auto max-h-[80vh]">
               <div id="ot-print-preview" className="p-6">
                 <ReportSheet
                   profile={profile}
@@ -794,11 +758,23 @@ export default function App() {
         {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <div className="text-2xl font-semibold tracking-tight">Overtime-It</div>
-            <div className="text-sm text-neutral-600">
-              Module-ready ({moduleManifest.id}.{moduleManifest.version}) • Offline-first • Export/Import + Print
+            <div className="text-4xl sm:text-5xl font-black tracking-tight text-neutral-700">
+              <span>Overtime</span>
+              <span className="text-lime-500">It</span>
             </div>
+            <div className="text-sm text-neutral-700">Overtime logs, month locking, export/import, and print-ready reports.</div>
             <div className="mt-3 h-[2px] w-80 rounded-full bg-gradient-to-r from-lime-400/0 via-lime-400 to-emerald-400/0" />
+            <div className="mt-3 flex flex-wrap gap-2">
+              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border border-lime-200 bg-lime-50 text-neutral-800">
+                {fmtHours(totals.overtime)} overtime
+              </span>
+              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border border-neutral-200 bg-white text-neutral-800">
+                {totals.daysLogged} days
+              </span>
+              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border border-neutral-200 bg-white text-neutral-800">
+                {fmtHours(totals.totalWork)} work
+              </span>
+            </div>
           </div>
 
           {/* Top actions + pinned help icon */}
@@ -825,7 +801,7 @@ export default function App() {
           <div className="space-y-4">
             {/* Profile */}
             <div className="bg-white border border-neutral-200 rounded-2xl shadow-sm p-4 print:shadow-none">
-              <div className="font-semibold">Profile (shared)</div>
+              <div className="font-semibold text-neutral-800">Profile (shared)</div>
               <div className="mt-3 space-y-2">
                 <label className="block text-sm">
                   <div className="text-neutral-600">Organization</div>
@@ -850,7 +826,7 @@ export default function App() {
 
             {/* Month + settings */}
             <div className="bg-white border border-neutral-200 rounded-2xl shadow-sm p-4 print:shadow-none">
-              <div className="font-semibold">Month</div>
+              <div className="font-semibold text-neutral-800">Month</div>
               <div className="mt-3">
                 <label className="block text-sm">
                   <div className="text-neutral-600">Active month</div>
@@ -981,10 +957,12 @@ export default function App() {
             {/* Add / Edit entry */}
             <div className="flex flex-wrap items-end justify-between gap-3">
               <div>
-                <div className="font-semibold">{editingId ? "Edit entry" : "Add overtime entry"}</div>
+                <div className="font-semibold text-neutral-800">{editingId ? "Edit entry" : "Add overtime entry"}</div>
                 <div className="text-sm text-neutral-600">
                   Computed work: <span className="font-semibold">{fmtHours(computedWorkMins)}</span>
-                  {state.settings.roundingStep ? <span className="text-neutral-500"> · rounded to {state.settings.roundingStep}m</span> : null}
+                  {state.settings.roundingStep ? (
+                    <span className="text-neutral-500"> · rounded to {state.settings.roundingStep}m</span>
+                  ) : null}
                 </div>
                 {isMonthLocked ? <div className="text-xs text-red-700 mt-1">Month is locked — edits are disabled.</div> : null}
               </div>
@@ -1052,7 +1030,7 @@ export default function App() {
             <div className="mt-4 rounded-2xl border border-neutral-200 bg-neutral-50 p-3">
               <div className="flex flex-wrap items-end justify-between gap-3">
                 <div>
-                  <div className="font-semibold">Entries</div>
+                  <div className="font-semibold text-neutral-800">Entries</div>
                   <div className="text-sm text-neutral-600">
                     Total work: <span className="font-semibold">{fmtHours(totals.totalWork)}</span>{" "}
                     <span className="text-neutral-500">(breaks {fmtHours(totals.totalBreak)})</span>
@@ -1134,7 +1112,7 @@ export default function App() {
         </div>
 
         {toast ? (
-          <div className="fixed bottom-6 right-6 rounded-2xl bg-neutral-900 text-white px-4 py-3 shadow-lg print:hidden">
+          <div className="fixed bottom-6 right-6 rounded-2xl bg-neutral-800 text-white px-4 py-3 shadow-xl print:hidden">
             <div className="text-sm">{toast}</div>
           </div>
         ) : null}
