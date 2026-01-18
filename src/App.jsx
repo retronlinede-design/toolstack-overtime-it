@@ -90,6 +90,58 @@ const endOfMonthISO = (ym) => {
   return d.toISOString().slice(0, 10);
 };
 
+const calculateRules = (start, end, breakMins, rules) => {
+  if (!start || !end || !rules || !rules.length) return { totalMinutes: 0, minutesByRateLabel: {} };
+
+  const toMins = (s) => {
+    const [h, m] = String(s).split(":").map(Number);
+    return (h || 0) * 60 + (m || 0);
+  };
+
+  let s = toMins(start);
+  let e = toMins(end);
+  if (e < s) e += 1440; // Cross midnight
+
+  // Apply break from the end of the shift
+  const duration = Math.max(0, e - s - toNumber(breakMins));
+  const effectiveEnd = s + duration;
+
+  const byRate = {};
+  let total = 0;
+
+  if (duration > 0) {
+    rules.forEach((r) => {
+      const rS = toMins(r.start);
+      const rE = toMins(r.end);
+      const intervals = [];
+
+      if (rE < rS) {
+        intervals.push([0, rE]);
+        intervals.push([rS, 1440]);
+        intervals.push([1440, 1440 + rE]);
+        intervals.push([1440 + rS, 2880]);
+      } else {
+        intervals.push([rS, rE]);
+        intervals.push([1440 + rS, 1440 + rE]);
+      }
+
+      let mins = 0;
+      intervals.forEach(([iS, iE]) => {
+        const segS = Math.max(s, iS);
+        const segE = Math.min(effectiveEnd, iE);
+        if (segE > segS) mins += segE - segS;
+      });
+
+      if (mins > 0) {
+        byRate[r.rateLabel] = (byRate[r.rateLabel] || 0) + mins;
+        total += mins;
+      }
+    });
+  }
+
+  return { totalMinutes: total, minutesByRateLabel: byRate };
+};
+
 // --- UI tokens (Check-It master) ---
 const btnSecondary =
   "px-3 py-2 rounded-xl bg-white border border-neutral-200 shadow-sm hover:bg-neutral-50 active:translate-y-[1px] transition disabled:opacity-50 disabled:cursor-not-allowed";
@@ -260,6 +312,13 @@ function HelpModal({ open, onClose, appName = "ToolStack App", storageKey = "(un
               </ul>
             </Section>
 
+            <Section title="Overtime Rules (User-defined)">
+              <Bullet>You must define at least one overtime window before the app can calculate overtime.</Bullet>
+              <Bullet>Windows can cross midnight (e.g. 20:00–06:00).</Bullet>
+              <Bullet>When you enter a session (start/end), the app splits time into your rate windows automatically.</Bullet>
+              <Bullet>Break minutes reduce the calculated overtime (subtracted from the end of the shift first).</Bullet>
+            </Section>
+
             <Section title="Buttons glossary (same meaning across ToolStack)">
               <div className="rounded-2xl border border-neutral-200 bg-white px-3">
                 {[...baseActions, ...extra].map((a) => (
@@ -311,7 +370,7 @@ function migrateIfNeeded() {
 function loadProfile() {
   return (
     safeParse(typeof window !== "undefined" ? localStorage.getItem(PROFILE_KEY) : null, null) || {
-      org: "ToolStack",
+      org: "",
       user: "",
       language: "EN",
       logo: "",
@@ -322,6 +381,7 @@ function loadProfile() {
 function normalizeState(raw) {
   const base = {
     meta: { appId: APP_ID, version: APP_VERSION, updatedAt: new Date().toISOString() },
+    rules: [],
     settings: {
       standardDayMins: 480, // 8h
       roundingStep: 0, // 0 = exact minutes
@@ -342,6 +402,7 @@ function normalizeState(raw) {
   const ui = { ...base.ui, ...(s.ui || {}) };
   const settings = { ...base.settings, ...(s.settings || {}) };
   const lockedMonths = Array.isArray(s.lockedMonths) ? s.lockedMonths.filter(Boolean) : [];
+  const rules = Array.isArray(s.rules) ? s.rules : [];
 
   const cleanEntries = entries
     .filter(Boolean)
@@ -352,6 +413,8 @@ function normalizeState(raw) {
       end: e.end || "",
       breakMins: clamp(toNumber(e.breakMins), 0, 24 * 60),
       workMins: clamp(toNumber(e.workMins), 0, 24 * 60),
+      totalMinutes: toNumber(e.totalMinutes),
+      minutesByRateLabel: e.minutesByRateLabel || {},
       note: typeof e.note === "string" ? e.note : "",
       createdAt: e.createdAt || new Date().toISOString(),
       updatedAt: e.updatedAt || null,
@@ -365,6 +428,7 @@ function normalizeState(raw) {
     ...base,
     ...s,
     settings,
+    rules,
     ui,
     lockedMonths,
     entries: cleanEntries,
@@ -387,12 +451,67 @@ function saveState(state) {
   return next;
 }
 
+function RulesModal({ open, onClose, rules, onSave }) {
+  if (!open) return null;
+  const [name, setName] = useState("");
+  const [start, setStart] = useState("");
+  const [end, setEnd] = useState("");
+  const [rateLabel, setRateLabel] = useState("");
+
+  const add = () => {
+    if (!name || !start || !end || !rateLabel) return;
+    onSave([...rules, { id: uid("rule"), name, start, end, rateLabel }]);
+    setName(""); setStart(""); setEnd(""); setRateLabel("");
+  };
+
+  const remove = (id) => onSave(rules.filter((r) => r.id !== id));
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
+      <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col max-h-[80vh]">
+        <div className="p-4 border-b border-neutral-100 flex justify-between items-center bg-neutral-50">
+          <h3 className="font-semibold text-lg text-neutral-900">Overtime Rules</h3>
+          <button onClick={onClose} className={btnSecondary}>Close</button>
+        </div>
+        <div className="p-4 overflow-auto space-y-4 flex-1">
+          {rules.length === 0 && (
+            <div className="p-3 bg-amber-50 text-amber-800 rounded-xl text-sm border border-amber-100">
+              Set your overtime rules to enable automatic calculations.
+            </div>
+          )}
+          <div className="space-y-2">
+            {rules.map((r) => (
+              <div key={r.id} className="flex items-center gap-2 text-sm border border-neutral-200 p-3 rounded-xl bg-white">
+                <div className="flex-1 font-medium text-neutral-900">{r.name}</div>
+                <div className="text-neutral-600 font-mono">{r.start} - {r.end}</div>
+                <div className="bg-neutral-100 px-2 py-1 rounded text-xs font-medium text-neutral-700">{r.rateLabel}</div>
+                <button onClick={() => remove(r.id)} className="text-red-600 hover:bg-red-50 px-2 py-1 rounded transition">Delete</button>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="p-4 border-t border-neutral-100 bg-neutral-50">
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-2">
+            <input className={inputBase + " sm:col-span-2 !mt-0"} placeholder="Name (e.g. Night)" value={name} onChange={e => setName(e.target.value)} />
+            <input type="time" className={inputBase + " !mt-0"} value={start} onChange={e => setStart(e.target.value)} />
+            <input type="time" className={inputBase + " !mt-0"} value={end} onChange={e => setEnd(e.target.value)} />
+            <input className={inputBase + " !mt-0"} placeholder="Rate Label" value={rateLabel} onChange={e => setRateLabel(e.target.value)} />
+          </div>
+          <button onClick={add} disabled={!name || !start || !end || !rateLabel} className={btnPrimary + " w-full"}>Add Rule</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const [profile, setProfile] = useState(loadProfile());
   const [state, setState] = useState(loadState());
 
   const [previewOpen, setPreviewOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
+  const [rulesOpen, setRulesOpen] = useState(false);
 
   const [toast, setToast] = useState(null);
   const toastTimer = useRef(null);
@@ -470,25 +589,28 @@ export default function App() {
   }, [entriesSorted, state.ui]);
 
   const totals = useMemo(() => {
-    const totalWork = filtered.reduce((sum, e) => sum + (e.workMins || 0), 0);
-    const totalBreak = filtered.reduce((sum, e) => sum + (e.breakMins || 0), 0);
+    let totalOvertime = 0;
+    const byRate = {};
     const daySet = new Set(filtered.map((e) => e.date));
-    const daysLogged = daySet.size;
 
-    const standardDayMins = clamp(toNumber(state.settings.standardDayMins), 0, 24 * 60);
-    const expected = daysLogged * standardDayMins;
-    const balance = totalWork - expected;
-    const overtime = Math.max(0, balance);
+    filtered.forEach((e) => {
+      const mins = e.totalMinutes ?? e.workMins ?? 0;
+      totalOvertime += mins;
+      if (e.minutesByRateLabel) {
+        Object.entries(e.minutesByRateLabel).forEach(([label, m]) => {
+          byRate[label] = (byRate[label] || 0) + m;
+        });
+      } else if (mins > 0) {
+        byRate["(Legacy)"] = (byRate["(Legacy)"] || 0) + mins;
+      }
+    });
 
-    return { totalWork, totalBreak, daysLogged, expected, balance, overtime };
-  }, [filtered, state.settings.standardDayMins]);
+    return { totalOvertime, byRate, daysLogged: daySet.size };
+  }, [filtered]);
 
-  const computedWorkMins = useMemo(() => {
-    const gross = minutesBetween(start, end);
-    const b = clamp(toNumber(breakMins), 0, 24 * 60);
-    const raw = Math.max(0, gross - b);
-    return Math.max(0, roundToStep(raw, state.settings.roundingStep));
-  }, [start, end, breakMins, state.settings.roundingStep]);
+  const computedResult = useMemo(() => {
+    return calculateRules(start, end, breakMins, state.rules);
+  }, [start, end, breakMins, state.rules]);
 
   const canSaveEntry = Boolean(date && start && end) && !isMonthLocked;
 
@@ -522,11 +644,13 @@ export default function App() {
   const addOrUpdateEntry = () => {
     if (!date || !start || !end) return;
 
-    const gross = minutesBetween(start, end);
-    const b = clamp(toNumber(breakMins), 0, 24 * 60);
-    const rawWork = Math.max(0, gross - b);
-    const work = Math.max(0, roundToStep(rawWork, state.settings.roundingStep));
+    if (!state.rules || state.rules.length === 0) {
+      notify("Rules not set — add at least one window.");
+      return;
+    }
 
+    const { totalMinutes, minutesByRateLabel } = calculateRules(start, end, breakMins, state.rules);
+    
     if (editingId) {
       setState((prev) =>
         saveState({
@@ -538,8 +662,10 @@ export default function App() {
                   date,
                   start,
                   end,
-                  breakMins: b,
-                  workMins: work,
+                  breakMins: toNumber(breakMins),
+                  workMins: totalMinutes, // Keep for legacy compat
+                  totalMinutes,
+                  minutesByRateLabel,
                   note: String(note || "").trim(),
                   updatedAt: new Date().toISOString(),
                 }
@@ -557,8 +683,10 @@ export default function App() {
       date,
       start,
       end,
-      breakMins: b,
-      workMins: work,
+      breakMins: toNumber(breakMins),
+      workMins: totalMinutes,
+      totalMinutes,
+      minutesByRateLabel,
       note: String(note || "").trim(),
       createdAt: new Date().toISOString(),
       updatedAt: null,
@@ -658,7 +786,7 @@ export default function App() {
   };
 
   const exportCSV = () => {
-    const header = ["date", "start", "end", "breakMins", "workMins", "workHours", "note"];
+    const header = ["date", "start", "end", "breakMins", "totalMinutes", "totalHours", "note"];
 
     const esc = (v) => {
       const s = String(v ?? "");
@@ -670,8 +798,8 @@ export default function App() {
       e.start,
       e.end,
       e.breakMins ?? 0,
-      e.workMins ?? 0,
-      (toNumber(e.workMins) / 60).toFixed(2),
+      e.totalMinutes ?? 0,
+      (toNumber(e.totalMinutes) / 60).toFixed(2),
       e.note || "",
     ]);
 
@@ -718,6 +846,13 @@ export default function App() {
       ) : null}
 
       <HelpModal open={helpOpen} onClose={() => setHelpOpen(false)} appName="Overtime-It" storageKey={KEY} actions={["Export CSV"]} />
+      
+      <RulesModal 
+        open={rulesOpen} 
+        onClose={() => setRulesOpen(false)} 
+        rules={state.rules || []} 
+        onSave={(newRules) => setState(s => saveState({ ...s, rules: newRules }))} 
+      />
 
       {/* Preview Modal */}
       {previewOpen ? (
@@ -766,13 +901,10 @@ export default function App() {
             <div className="mt-3 h-[2px] w-80 rounded-full bg-gradient-to-r from-lime-400/0 via-lime-400 to-emerald-400/0" />
             <div className="mt-3 flex flex-wrap gap-2">
               <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border border-lime-200 bg-lime-50 text-neutral-800">
-                {fmtHours(totals.overtime)} overtime
+                {fmtHours(totals.totalOvertime)} overtime
               </span>
               <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border border-neutral-200 bg-white text-neutral-800">
                 {totals.daysLogged} days
-              </span>
-              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border border-neutral-200 bg-white text-neutral-800">
-                {fmtHours(totals.totalWork)} work
               </span>
             </div>
           </div>
@@ -780,7 +912,8 @@ export default function App() {
           {/* Top actions + pinned help icon */}
           <div className="w-full sm:w-[860px] relative">
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-5 pr-12">
-              <ActionButton onClick={openPreview}>Preview</ActionButton>
+              <ActionButton onClick={() => setRulesOpen(true)}>Rules</ActionButton>
+              <ActionButton onClick={openPreview} tone="default">Preview</ActionButton>
               <ActionButton onClick={printFromTop}>Print / Save PDF</ActionButton>
               <ActionButton onClick={exportCSV}>Export CSV</ActionButton>
               <ActionButton onClick={exportJSON}>Export</ActionButton>
@@ -811,13 +944,6 @@ export default function App() {
                   <div className="text-neutral-600">User</div>
                   <input className={inputBase} value={profile.user} onChange={(e) => setProfile({ ...profile, user: e.target.value })} />
                 </label>
-                <label className="block text-sm">
-                  <div className="text-neutral-600">Language</div>
-                  <select className={inputBase} value={profile.language} onChange={(e) => setProfile({ ...profile, language: e.target.value })}>
-                    <option value="EN">EN</option>
-                    <option value="DE">DE</option>
-                  </select>
-                </label>
                 <div className="pt-2 text-xs text-neutral-500">
                   Stored at <span className="font-mono">{PROFILE_KEY}</span>
                 </div>
@@ -843,66 +969,21 @@ export default function App() {
               <div className="mt-4 rounded-2xl border border-neutral-200 p-4">
                 <div className="flex items-center justify-between gap-3">
                   <div>
-                    <div className="text-sm text-neutral-600">Days logged</div>
-                    <div className="text-2xl font-semibold text-neutral-900 mt-1">{totals.daysLogged}</div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-sm text-neutral-600">Total work</div>
-                    <div className="text-2xl font-semibold text-neutral-900 mt-1">{fmtHours(totals.totalWork)}</div>
+                    <div className="text-sm text-neutral-600">Total Overtime</div>
+                    <div className="text-2xl font-semibold text-neutral-900 mt-1">{fmtHours(totals.totalOvertime)}</div>
                   </div>
                 </div>
-                <div className="mt-3 pt-3 border-t border-neutral-200 flex items-center justify-between">
-                  <div className="text-sm text-neutral-600">Overtime (vs expected)</div>
-                  <div className="text-lg font-semibold text-neutral-900">{fmtHours(totals.overtime)}</div>
-                </div>
-                <div className="mt-1 text-xs text-neutral-600">
-                  Expected: <span className="font-medium text-neutral-900">{fmtHours(totals.expected)}</span> · Balance:{" "}
-                  <span className="font-medium text-neutral-900">{fmtHours(Math.abs(totals.balance))}</span>{" "}
-                  {totals.balance >= 0 ? "over" : "under"}
+                <div className="mt-3 pt-3 border-t border-neutral-200 space-y-1">
+                  {Object.entries(totals.byRate).map(([label, mins]) => (
+                    <div key={label} className="flex justify-between text-sm">
+                      <span className="text-neutral-600">{label}</span>
+                      <span className="font-medium text-neutral-900">{fmtHours(mins)}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
 
-              <div className="mt-4 grid grid-cols-1 gap-3">
-                <label className="block text-sm">
-                  <div className="text-neutral-600">Standard day (minutes)</div>
-                  <input
-                    type="number"
-                    min="0"
-                    max={24 * 60}
-                    className={inputBase}
-                    value={state.settings.standardDayMins}
-                    onChange={(e) =>
-                      setState((s) =>
-                        saveState({
-                          ...s,
-                          settings: { ...s.settings, standardDayMins: clamp(toNumber(e.target.value), 0, 24 * 60) },
-                        })
-                      )
-                    }
-                  />
-                  <div className="text-xs text-neutral-500 mt-1">Default 480 = 8 hours.</div>
-                </label>
-
-                <label className="block text-sm">
-                  <div className="text-neutral-600">Rounding</div>
-                  <select
-                    className={inputBase}
-                    value={String(state.settings.roundingStep || 0)}
-                    onChange={(e) =>
-                      setState((s) =>
-                        saveState({
-                          ...s,
-                          settings: { ...s.settings, roundingStep: toNumber(e.target.value) },
-                        })
-                      )
-                    }
-                  >
-                    <option value="0">Exact minutes</option>
-                    <option value="5">Nearest 5 minutes</option>
-                    <option value="15">Nearest 15 minutes</option>
-                  </select>
-                </label>
-
+              <div className="mt-4">
                 <div className="flex items-center justify-between gap-2">
                   <button className={isMonthLocked ? btnSecondary : btnDanger} onClick={toggleLockMonth}>
                     {isMonthLocked ? "Unlock month" : "Lock month"}
@@ -959,10 +1040,8 @@ export default function App() {
               <div>
                 <div className="font-semibold text-neutral-800">{editingId ? "Edit entry" : "Add overtime entry"}</div>
                 <div className="text-sm text-neutral-600">
-                  Computed work: <span className="font-semibold">{fmtHours(computedWorkMins)}</span>
-                  {state.settings.roundingStep ? (
-                    <span className="text-neutral-500"> · rounded to {state.settings.roundingStep}m</span>
-                  ) : null}
+                  Computed: <span className="font-semibold">{fmtHours(computedResult.totalMinutes)}</span>
+                  {(!state.rules || !state.rules.length) && <span className="text-red-600 ml-2">No rules set!</span>}
                 </div>
                 {isMonthLocked ? <div className="text-xs text-red-700 mt-1">Month is locked — edits are disabled.</div> : null}
               </div>
@@ -1032,8 +1111,7 @@ export default function App() {
                 <div>
                   <div className="font-semibold text-neutral-800">Entries</div>
                   <div className="text-sm text-neutral-600">
-                    Total work: <span className="font-semibold">{fmtHours(totals.totalWork)}</span>{" "}
-                    <span className="text-neutral-500">(breaks {fmtHours(totals.totalBreak)})</span>
+                    Total: <span className="font-semibold">{fmtHours(totals.totalOvertime)}</span>
                   </div>
                 </div>
 
@@ -1052,7 +1130,7 @@ export default function App() {
                       <th className="py-2 pr-2">Start</th>
                       <th className="py-2 pr-2">End</th>
                       <th className="py-2 pr-2">Break</th>
-                      <th className="py-2 pr-2">Work</th>
+                      <th className="py-2 pr-2">Total</th>
                       <th className="py-2 pr-2">Note</th>
                       <th className="py-2 pr-2 text-right">Actions</th>
                     </tr>
@@ -1075,7 +1153,7 @@ export default function App() {
                             <td className="py-2 pr-2">{e.start || "-"}</td>
                             <td className="py-2 pr-2">{e.end || "-"}</td>
                             <td className="py-2 pr-2">{e.breakMins ? `${e.breakMins}m` : "-"}</td>
-                            <td className="py-2 pr-2 font-semibold">{fmtHours(e.workMins || 0)}</td>
+                            <td className="py-2 pr-2 font-semibold">{fmtHours(e.totalMinutes ?? e.workMins ?? 0)}</td>
                             <td className="py-2 pr-2">{e.note || ""}</td>
                             <td className="py-2 pr-2 text-right">
                               <div className="flex items-center justify-end gap-2">
@@ -1152,9 +1230,9 @@ function ReportSheet({ profile, month, useRange, range, totals, entries, storage
         </div>
         <div className="rounded-2xl border border-neutral-200 p-4">
           <div className="text-sm text-neutral-600">Overtime</div>
-          <div className="text-lg font-semibold text-neutral-900 mt-1">{fmtHours(totals.overtime)}</div>
+          <div className="text-lg font-semibold text-neutral-900 mt-1">{fmtHours(totals.totalOvertime)}</div>
           <div className="text-xs text-neutral-600">
-            Total work {fmtHours(totals.totalWork)} · Days {totals.daysLogged}
+            Days {totals.daysLogged}
           </div>
         </div>
       </div>
@@ -1163,23 +1241,12 @@ function ReportSheet({ profile, month, useRange, range, totals, entries, storage
         <div className="font-semibold text-neutral-900">Totals</div>
         <div className="mt-2 grid grid-cols-1 md:grid-cols-4 gap-3 text-sm">
           <div>
-            <div className="text-neutral-600">Work</div>
-            <div className="font-semibold text-neutral-900">{fmtHours(totals.totalWork)}</div>
+            <div className="text-neutral-600">Total Overtime</div>
+            <div className="font-semibold text-neutral-900">{fmtHours(totals.totalOvertime)}</div>
           </div>
-          <div>
-            <div className="text-neutral-600">Breaks</div>
-            <div className="font-semibold text-neutral-900">{fmtHours(totals.totalBreak)}</div>
-          </div>
-          <div>
-            <div className="text-neutral-600">Expected</div>
-            <div className="font-semibold text-neutral-900">{fmtHours(totals.expected)}</div>
-          </div>
-          <div>
-            <div className="text-neutral-600">Balance</div>
-            <div className="font-semibold text-neutral-900">
-              {fmtHours(Math.abs(totals.balance))} {totals.balance >= 0 ? "over" : "under"}
-            </div>
-          </div>
+          {Object.entries(totals.byRate).map(([label, mins]) => (
+            <div key={label}><div className="text-neutral-600">{label}</div><div className="font-semibold text-neutral-900">{fmtHours(mins)}</div></div>
+          ))}
         </div>
       </div>
 
@@ -1191,7 +1258,7 @@ function ReportSheet({ profile, month, useRange, range, totals, entries, storage
               <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-600">Start</th>
               <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-600">End</th>
               <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-600">Break</th>
-              <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-600">Work</th>
+              <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-600">Total</th>
               <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-600">Note</th>
             </tr>
           </thead>
@@ -1209,7 +1276,7 @@ function ReportSheet({ profile, month, useRange, range, totals, entries, storage
                   <td className="px-3 py-2">{e.start || "-"}</td>
                   <td className="px-3 py-2">{e.end || "-"}</td>
                   <td className="px-3 py-2">{e.breakMins ? `${e.breakMins}m` : "-"}</td>
-                  <td className="px-3 py-2 font-semibold">{fmtHours(e.workMins || 0)}</td>
+                  <td className="px-3 py-2 font-semibold">{fmtHours(e.totalMinutes ?? e.workMins ?? 0)}</td>
                   <td className="px-3 py-2">{e.note || ""}</td>
                 </tr>
               ))
