@@ -91,7 +91,7 @@ const endOfMonthISO = (ym) => {
 };
 
 const calculateRules = (start, end, breakMins, rules) => {
-  if (!start || !end || !rules || !rules.length) return { totalMinutes: 0, minutesByRateLabel: {} };
+  if (!start || !end) return { totalMinutes: 0, minutesByRateLabel: {}, missingMinutes: 0 };
 
   const toMins = (s) => {
     const [h, m] = String(s).split(":").map(Number);
@@ -109,7 +109,7 @@ const calculateRules = (start, end, breakMins, rules) => {
   const byRate = {};
   let total = 0;
 
-  if (duration > 0) {
+  if (duration > 0 && rules && rules.length > 0) {
     rules.forEach((r) => {
       const rS = toMins(r.start);
       const rE = toMins(r.end);
@@ -139,14 +139,47 @@ const calculateRules = (start, end, breakMins, rules) => {
     });
   }
 
-  return { totalMinutes: total, minutesByRateLabel: byRate };
+  const missingMinutes = Math.max(0, duration - total);
+
+  return { totalMinutes: total, minutesByRateLabel: byRate, missingMinutes };
+};
+
+const getProfile = (dateStr, holidays = [], override = "auto") => {
+  if (override && override !== "auto") return override;
+  if (holidays && holidays.includes(dateStr)) return "sundayHoliday";
+  if (!dateStr) return "weekday";
+  const [y, m, d] = dateStr.split("-").map(Number);
+  const day = new Date(y, m - 1, d).getDay();
+  if (day === 0) return "sundayHoliday";
+  if (day === 6) return "saturday";
+  return "weekday";
+};
+
+const getWeekRange = (dateStr) => {
+  const d = new Date(dateStr || isoToday());
+  const day = d.getDay();
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+  const start = new Date(d);
+  start.setDate(diff);
+  const end = new Date(start);
+  end.setDate(start.getDate() + 6);
+  return {
+    start: start.toISOString().slice(0, 10),
+    end: end.toISOString().slice(0, 10),
+    label: `Week ${start.toLocaleDateString()} - ${end.toLocaleDateString()}`,
+  };
+};
+
+const getMonthRange = (dateStr) => {
+  const ym = (dateStr || isoToday()).slice(0, 7);
+  return { start: startOfMonthISO(ym), end: endOfMonthISO(ym), label: `Month ${monthLabel(ym)}` };
 };
 
 // --- UI tokens (Check-It master) ---
 const btnSecondary =
-  "px-3 py-2 rounded-xl bg-white border border-neutral-200 shadow-sm hover:bg-neutral-50 active:translate-y-[1px] transition disabled:opacity-50 disabled:cursor-not-allowed";
+  "px-3 py-2 rounded-xl bg-white border border-neutral-200 shadow-sm hover:bg-[#D5FF00] hover:text-black active:translate-y-[1px] transition disabled:opacity-50 disabled:cursor-not-allowed";
 const btnPrimary =
-  "px-3 py-2 rounded-xl bg-neutral-700 text-white border border-neutral-700 shadow-sm hover:bg-neutral-600 active:translate-y-[1px] transition disabled:opacity-50 disabled:cursor-not-allowed";
+  "px-3 py-2 rounded-xl bg-neutral-700 text-white border border-neutral-700 shadow-sm hover:bg-[#D5FF00] hover:text-black active:translate-y-[1px] transition disabled:opacity-50 disabled:cursor-not-allowed";
 const btnDanger =
   "px-3 py-2 rounded-xl bg-red-50 text-red-700 border border-red-200 shadow-sm hover:bg-red-100 active:translate-y-[1px] transition disabled:opacity-50 disabled:cursor-not-allowed";
 const inputBase =
@@ -159,10 +192,10 @@ const ACTION_BASE =
 function ActionButton({ children, onClick, tone = "default", disabled, title }) {
   const cls =
     tone === "primary"
-      ? "bg-neutral-700 hover:bg-neutral-600 text-white border-neutral-700"
+      ? "bg-neutral-700 hover:bg-[#D5FF00] hover:text-black text-white border-neutral-700"
       : tone === "danger"
       ? "bg-red-50 hover:bg-red-100 text-red-700 border-red-200"
-      : "bg-white hover:bg-neutral-50 text-neutral-700 border-neutral-200";
+      : "bg-white hover:bg-[#D5FF00] hover:text-black text-neutral-700 border-neutral-200";
 
   return (
     <button type="button" onClick={onClick} disabled={disabled} title={title} className={`${ACTION_BASE} ${cls}`}>
@@ -174,8 +207,8 @@ function ActionButton({ children, onClick, tone = "default", disabled, title }) 
 function ActionFileButton({ children, onFile, accept = "application/json", tone = "primary", title }) {
   const cls =
     tone === "primary"
-      ? "bg-neutral-700 hover:bg-neutral-600 text-white border-neutral-700"
-      : "bg-white hover:bg-neutral-50 text-neutral-700 border-neutral-200";
+      ? "bg-neutral-700 hover:bg-[#D5FF00] hover:text-black text-white border-neutral-700"
+      : "bg-white hover:bg-[#D5FF00] hover:text-black text-neutral-700 border-neutral-200";
 
   return (
     <label title={title} className={`${ACTION_BASE} ${cls} cursor-pointer`}>
@@ -204,7 +237,7 @@ function HelpIconButton({ onClick, title = "Help", className = "" }) {
       aria-label={title}
       className={
         "print:hidden h-10 w-10 shrink-0 rounded-xl border border-neutral-200 bg-white shadow-sm " +
-        "hover:bg-neutral-50 active:translate-y-[1px] transition flex items-center justify-center " +
+        "hover:bg-[#D5FF00] active:translate-y-[1px] transition flex items-center justify-center " +
         "focus:outline-none focus:ring-2 focus:ring-lime-400/25 focus:border-neutral-300 " +
         className
       }
@@ -249,27 +282,26 @@ function HelpModal({ open, onClose, appName = "ToolStack App", storageKey = "(un
   }));
 
   return (
-    <div className="fixed inset-0 z-50">
-      <div className="absolute inset-0 bg-black/50" onClick={onClose} aria-hidden="true" />
-      <div className="absolute inset-0 flex items-center justify-center p-4 sm:p-8">
-        <div className="w-full max-w-2xl rounded-2xl border border-neutral-200 bg-white shadow-xl overflow-hidden">
-          <div className="p-4 border-b border-neutral-100 flex items-start justify-between gap-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+      <div className="absolute inset-0 bg-black/40" onClick={onClose} aria-hidden="true" />
+      <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
+        <div className="p-5 border-b border-neutral-100 flex items-start justify-between gap-4 bg-white shrink-0">
             <div>
               <div className="text-sm text-neutral-500">ToolStack • Help Pack v1</div>
               <h2 className="text-lg font-semibold text-neutral-900">{appName} — how your data works</h2>
-              <div className="mt-3 h-[2px] w-56 rounded-full bg-gradient-to-r from-lime-400/0 via-lime-400 to-emerald-400/0" />
+              <div className="mt-3 h-[2px] w-56 rounded-full bg-gradient-to-r from-[#D5FF00]/0 via-[#D5FF00] to-[#D5FF00]/0" />
             </div>
 
             <button
               type="button"
-              className="print:hidden px-3 py-2 rounded-xl text-sm font-medium border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-900 transition"
+              className={btnSecondary}
               onClick={onClose}
             >
               Close
             </button>
           </div>
 
-          <div className="p-4 space-y-5 max-h-[70vh] overflow-auto">
+          <div className="p-5 space-y-5 overflow-y-auto flex-1">
             <Section title="Quick start (daily use)">
               <ul className="space-y-1">
                 <Bullet>Use the app normally — it autosaves as you type.</Bullet>
@@ -313,6 +345,7 @@ function HelpModal({ open, onClose, appName = "ToolStack App", storageKey = "(un
             </Section>
 
             <Section title="Overtime Rules (User-defined)">
+              <Bullet>Use the <b>Rules Wizard</b> to set up rules quickly.</Bullet>
               <Bullet>You must define at least one overtime window before the app can calculate overtime.</Bullet>
               <Bullet>Windows can cross midnight (e.g. 20:00–06:00).</Bullet>
               <Bullet>When you enter a session (start/end), the app splits time into your rate windows automatically.</Bullet>
@@ -347,16 +380,15 @@ function HelpModal({ open, onClose, appName = "ToolStack App", storageKey = "(un
             </Section>
           </div>
 
-          <div className="p-4 border-t border-neutral-100 flex items-center justify-end gap-2">
+          <div className="p-4 border-t border-neutral-100 bg-neutral-50 flex items-center justify-end gap-2 shrink-0">
             <button
               type="button"
-              className="print:hidden px-3 py-2 rounded-xl text-sm font-medium border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-900 transition"
+              className={btnSecondary}
               onClick={onClose}
             >
               Close
             </button>
           </div>
-        </div>
       </div>
     </div>
   );
@@ -381,7 +413,8 @@ function loadProfile() {
 function normalizeState(raw) {
   const base = {
     meta: { appId: APP_ID, version: APP_VERSION, updatedAt: new Date().toISOString() },
-    rules: [],
+    rulesByProfile: { weekday: [], saturday: [], sundayHoliday: [] },
+    holidays: [],
     settings: {
       standardDayMins: 480, // 8h
       roundingStep: 0, // 0 = exact minutes
@@ -402,7 +435,21 @@ function normalizeState(raw) {
   const ui = { ...base.ui, ...(s.ui || {}) };
   const settings = { ...base.settings, ...(s.settings || {}) };
   const lockedMonths = Array.isArray(s.lockedMonths) ? s.lockedMonths.filter(Boolean) : [];
-  const rules = Array.isArray(s.rules) ? s.rules : [];
+  const holidays = Array.isArray(s.holidays) ? s.holidays : [];
+  
+  let rulesByProfile = s.rulesByProfile || { weekday: [], saturday: [], sundayHoliday: [] };
+  
+  // Migration from rulesByDayType (v1.1) or rules (v1.0)
+  if (s.rulesByDayType && !s.rulesByProfile) {
+    rulesByProfile.weekday = s.rulesByDayType.weekday || [];
+    rulesByProfile.saturday = s.rulesByDayType.weekend || [];
+    rulesByProfile.sundayHoliday = s.rulesByDayType.weekend || [];
+  } else if (Array.isArray(s.rules) && !s.rulesByProfile) {
+    rulesByProfile.weekday = s.rules;
+  }
+  ['weekday', 'saturday', 'sundayHoliday'].forEach(k => {
+    if (!Array.isArray(rulesByProfile[k])) rulesByProfile[k] = [];
+  });
 
   const cleanEntries = entries
     .filter(Boolean)
@@ -414,6 +461,8 @@ function normalizeState(raw) {
       breakMins: clamp(toNumber(e.breakMins), 0, 24 * 60),
       workMins: clamp(toNumber(e.workMins), 0, 24 * 60),
       totalMinutes: toNumber(e.totalMinutes),
+      missingMinutes: toNumber(e.missingMinutes),
+      profileOverride: e.profileOverride || "auto",
       minutesByRateLabel: e.minutesByRateLabel || {},
       note: typeof e.note === "string" ? e.note : "",
       createdAt: e.createdAt || new Date().toISOString(),
@@ -428,7 +477,10 @@ function normalizeState(raw) {
     ...base,
     ...s,
     settings,
-    rules,
+    rulesByProfile,
+    holidays,
+    rulesByDayType: undefined,
+    rules: undefined, // Cleanup old key
     ui,
     lockedMonths,
     entries: cleanEntries,
@@ -451,54 +503,408 @@ function saveState(state) {
   return next;
 }
 
-function RulesModal({ open, onClose, rules, onSave }) {
+function RulesWizardModal({ open, onClose, rulesByProfile, holidays, onSave }) {
   if (!open) return null;
+  const [step, setStep] = useState(1);
+  const [activeTab, setActiveTab] = useState("weekday");
+  const [draftRules, setDraftRules] = useState({ weekday: [], saturday: [], sundayHoliday: [] });
+  const [draftHolidays, setDraftHolidays] = useState([]);
+  const [newHoliday, setNewHoliday] = useState("");
+
+  // Form inputs
   const [name, setName] = useState("");
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
   const [rateLabel, setRateLabel] = useState("");
 
+  // Test inputs
+  const [tS, setTS] = useState("08:00");
+  const [tE, setTE] = useState("18:00");
+  const [tB, setTB] = useState(0);
+
+  useEffect(() => {
+    if (open) {
+      const hasRules = rulesByProfile && Object.values(rulesByProfile).some(arr => arr.length > 0);
+      setStep(hasRules ? 2 : 1);
+      setActiveTab("weekday");
+      setDraftRules(rulesByProfile ? JSON.parse(JSON.stringify(rulesByProfile)) : { weekday: [], saturday: [], sundayHoliday: [] });
+      setDraftHolidays(holidays ? [...holidays] : []);
+      setName(""); setStart(""); setEnd(""); setRateLabel("");
+      setTS("08:00"); setTE("18:00"); setTB(0);
+      setNewHoliday("");
+    }
+  }, [open, rulesByProfile, holidays]);
+
+  const currentList = draftRules[activeTab] || [];
+
   const add = () => {
     if (!name || !start || !end || !rateLabel) return;
-    onSave([...rules, { id: uid("rule"), name, start, end, rateLabel }]);
+    setDraftRules({
+      ...draftRules,
+      [activeTab]: [...currentList, { id: uid("rule"), name, start, end, rateLabel }]
+    });
     setName(""); setStart(""); setEnd(""); setRateLabel("");
   };
 
-  const remove = (id) => onSave(rules.filter((r) => r.id !== id));
+  const remove = (id) => {
+    setDraftRules({ ...draftRules, [activeTab]: currentList.filter((r) => r.id !== id) });
+  };
+
+  const edit = (r) => {
+    setName(r.name);
+    setStart(r.start);
+    setEnd(r.end);
+    setRateLabel(r.rateLabel);
+    remove(r.id);
+  };
+
+  const addHoliday = () => {
+    if (!newHoliday || draftHolidays.includes(newHoliday)) return;
+    setDraftHolidays([...draftHolidays, newHoliday].sort());
+    setNewHoliday("");
+  };
+
+  const removeHoliday = (h) => {
+    setDraftHolidays(draftHolidays.filter(d => d !== h));
+  };
+
+  const testResult = useMemo(() => {
+    const rules = draftRules[activeTab] || [];
+    return calculateRules(tS, tE, tB, rules);
+  }, [tS, tE, tB, draftRules, activeTab]);
+
+  const canNext = step === 1 || (step === 2 && Object.values(draftRules).some(arr => arr.length > 0));
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col max-h-[80vh]">
-        <div className="p-4 border-b border-neutral-100 flex justify-between items-center bg-neutral-50">
-          <h3 className="font-semibold text-lg text-neutral-900">Overtime Rules</h3>
+      <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
+        {/* Header */}
+        <div className="p-4 border-b border-neutral-100 bg-neutral-50 flex justify-between items-center">
+          <div>
+            <h3 className="font-semibold text-lg text-neutral-900">Rules Wizard</h3>
+            <div className="text-xs text-neutral-500">Step {step} of 3</div>
+          </div>
           <button onClick={onClose} className={btnSecondary}>Close</button>
         </div>
-        <div className="p-4 overflow-auto space-y-4 flex-1">
-          {rules.length === 0 && (
-            <div className="p-3 bg-amber-50 text-amber-800 rounded-xl text-sm border border-amber-100">
-              Set your overtime rules to enable automatic calculations.
+
+        {/* Body */}
+        <div className="p-6 overflow-auto flex-1">
+          {step === 1 && (
+            <div className="space-y-4">
+              <h4 className="text-xl font-bold text-neutral-800">Welcome to Overtime-It Rules</h4>
+              <p className="text-neutral-600">
+                To calculate your overtime correctly, this app needs to know your rate windows.
+              </p>
+              <ul className="list-disc ml-5 space-y-2 text-neutral-700">
+                <li><b>Rate Labels:</b> Give each window a name (e.g., "1.5x", "Night", "Sunday").</li>
+                <li><b>Time Windows:</b> Define start and end times for each rate.</li>
+                <li><b>Crossing Midnight:</b> If End time is earlier than Start time, it counts as overnight.</li>
+                <li><b>Time Only:</b> This version tracks hours/minutes, not currency.</li>
+              </ul>
+              <div className="pt-4">
+                <button onClick={() => setStep(2)} className={btnPrimary + " w-full sm:w-auto"}>Start setup</button>
+              </div>
             </div>
           )}
-          <div className="space-y-2">
-            {rules.map((r) => (
-              <div key={r.id} className="flex items-center gap-2 text-sm border border-neutral-200 p-3 rounded-xl bg-white">
-                <div className="flex-1 font-medium text-neutral-900">{r.name}</div>
-                <div className="text-neutral-600 font-mono">{r.start} - {r.end}</div>
-                <div className="bg-neutral-100 px-2 py-1 rounded text-xs font-medium text-neutral-700">{r.rateLabel}</div>
-                <button onClick={() => remove(r.id)} className="text-red-600 hover:bg-red-50 px-2 py-1 rounded transition">Delete</button>
+
+          {step === 2 && (
+            <div className="space-y-6">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-semibold text-neutral-900">Manage Rules</h4>
+                  <div className="flex bg-neutral-100 p-1 rounded-xl">
+                    {["weekday", "saturday", "sundayHoliday"].map(tab => (
+                      <button key={tab} onClick={() => setActiveTab(tab)} className={`px-3 py-1 text-xs font-medium rounded-lg capitalize transition ${activeTab === tab ? "bg-white shadow text-neutral-900" : "text-neutral-500 hover:text-neutral-700"}`}>
+                        {tab === "sundayHoliday" ? "Sun/Hol" : tab}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  <input className={inputBase + " !mt-0 sm:col-span-2"} placeholder="Name (e.g. Evening)" value={name} onChange={e => setName(e.target.value)} />
+                  <input type="time" className={inputBase + " !mt-0"} value={start} onChange={e => setStart(e.target.value)} />
+                  <input type="time" className={inputBase + " !mt-0"} value={end} onChange={e => setEnd(e.target.value)} />
+                  <input className={inputBase + " !mt-0 sm:col-span-2"} placeholder="Rate Label (e.g. 1.5x)" value={rateLabel} onChange={e => setRateLabel(e.target.value)} />
+                  <button onClick={add} disabled={!name || !start || !end || !rateLabel} className={btnPrimary + " sm:col-span-2"}>Add Window</button>
+                </div>
+                <div className="text-xs text-neutral-500">
+                  Tip: If End is earlier than Start, it covers midnight (e.g. 22:00 to 06:00).
+                </div>
               </div>
-            ))}
+
+              <div className="space-y-2">
+                <h4 className="font-semibold text-neutral-900 capitalize">{activeTab === "sundayHoliday" ? "Sunday / Holiday" : activeTab} Rules ({currentList.length})</h4>
+                {currentList.length === 0 && (
+                  <div className="p-3 bg-neutral-50 border border-neutral-200 rounded-xl text-sm text-neutral-500 italic">
+                    No rules for this profile yet.
+                  </div>
+                )}
+                {currentList.map((r) => (
+                  <div key={r.id} className="flex items-center gap-2 text-sm border border-neutral-200 p-3 rounded-xl bg-white">
+                    <div className="flex-1 font-medium text-neutral-900">{r.name}</div>
+                    <div className="text-neutral-600 font-mono">{r.start} - {r.end}</div>
+                    <div className="bg-neutral-100 px-2 py-1 rounded text-xs font-medium text-neutral-700">{r.rateLabel}</div>
+                    <button onClick={() => edit(r)} className="text-neutral-600 hover:bg-[#D5FF00] hover:text-black px-2 py-1 rounded transition">Edit</button>
+                    <button onClick={() => remove(r.id)} className="text-red-600 hover:bg-red-50 px-2 py-1 rounded transition">Delete</button>
+                  </div>
+                ))}
+              </div>
+
+              <div className="border-t border-neutral-100 pt-4 space-y-3">
+                <h4 className="font-semibold text-neutral-900">Public Holidays</h4>
+                <div className="flex gap-2">
+                  <input type="date" className={inputBase + " !mt-0"} value={newHoliday} onChange={e => setNewHoliday(e.target.value)} />
+                  <button onClick={addHoliday} className={btnSecondary}>Add</button>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {draftHolidays.length === 0 && <span className="text-xs text-neutral-400 italic">No holidays added.</span>}
+                  {draftHolidays.map(h => (
+                    <span key={h} className="inline-flex items-center px-2 py-1 rounded border border-neutral-200 bg-neutral-50 text-xs text-neutral-700">
+                      {h}
+                      <button onClick={() => removeHoliday(h)} className="ml-2 text-neutral-400 hover:text-red-600">×</button>
+                    </span>
+                  ))}
+                </div>
+                <div className="text-xs text-neutral-500">Dates listed here use the Sunday/Holiday rules profile.</div>
+              </div>
+            </div>
+          )}
+
+          {step === 3 && (
+            <div className="space-y-6">
+              <div>
+                {["weekday", "saturday", "sundayHoliday"].map(type => (
+                  <div key={type} className="mb-4 last:mb-0">
+                    <h4 className="font-semibold text-neutral-900 mb-2 capitalize">{type === "sundayHoliday" ? "Sunday / Holiday" : type} Rules</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {draftRules[type].length === 0 ? <span className="text-xs text-neutral-400 italic">None</span> : 
+                        draftRules[type].map(r => (
+                          <span key={r.id} className="inline-flex items-center px-2 py-1 rounded border border-neutral-200 bg-neutral-50 text-xs text-neutral-700">
+                            {r.name}: {r.start}-{r.end} ({r.rateLabel})
+                          </span>
+                        ))
+                      }
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="border-t border-neutral-100 pt-4">
+                <h4 className="font-semibold text-neutral-900 mb-3">Test Calculation ({activeTab === "sundayHoliday" ? "Sun/Hol" : activeTab})</h4>
+                <div className="grid grid-cols-3 gap-2 mb-3">
+                  <label className="text-xs text-neutral-600 block">Start
+                    <input type="time" className={inputBase} value={tS} onChange={e => setTS(e.target.value)} />
+                  </label>
+                  <label className="text-xs text-neutral-600 block">End
+                    <input type="time" className={inputBase} value={tE} onChange={e => setTE(e.target.value)} />
+                  </label>
+                  <label className="text-xs text-neutral-600 block">Break (m)
+                    <input type="number" className={inputBase} value={tB} onChange={e => setTB(e.target.value)} />
+                  </label>
+                </div>
+                <div className="bg-lime-50 border border-lime-100 p-3 rounded-xl">
+                  <div className="text-sm font-medium text-lime-900">Result: {fmtHours(testResult.totalMinutes)}</div>
+                  <div className="text-xs text-lime-800 mt-1 space-y-1">
+                    {Object.entries(testResult.minutesByRateLabel).map(([k, v]) => (
+                      <div key={k} className="flex justify-between"><span>{k}:</span> <span>{fmtHours(v)}</span></div>
+                    ))}
+                    {testResult.missingMinutes > 0 && (
+                      <div className="text-xs text-amber-700 font-medium mt-1 border-t border-amber-200 pt-1">
+                        Missing rules: {fmtHours(testResult.missingMinutes)}
+                        <div className="font-normal text-amber-600">Add a rule window to cover this time.</div>
+                      </div>
+                    )}
+                    {testResult.totalMinutes === 0 && <span>No overtime calculated.</span>}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="p-4 border-t border-neutral-100 bg-neutral-50 flex justify-between">
+          <button 
+            onClick={() => setStep(s => Math.max(1, s - 1))} 
+            disabled={step === 1} 
+            className={btnSecondary}
+          >
+            Back
+          </button>
+          
+          {step < 3 ? (
+            <button 
+              onClick={() => setStep(s => s + 1)} 
+              disabled={!canNext} 
+              className={btnPrimary}
+            >
+              Next
+            </button>
+          ) : (
+            <button 
+              onClick={() => { onSave(draftRules, draftHolidays); onClose(); }} 
+              className={btnPrimary}
+            >
+              Finish & Save
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ReportModal({ open, onClose, entries, profile, onOpenRules }) {
+  if (!open) return null;
+  const [rangeType, setRangeType] = useState("week");
+  const [targetDate, setTargetDate] = useState(isoToday());
+
+  const range = useMemo(() => {
+    return rangeType === "week" ? getWeekRange(targetDate) : getMonthRange(targetDate);
+  }, [rangeType, targetDate]);
+
+  const filtered = useMemo(() => {
+    return entries.filter((e) => e.date >= range.start && e.date <= range.end);
+  }, [entries, range]);
+
+  const totals = useMemo(() => {
+    let total = 0;
+    let missing = 0;
+    const byRate = {};
+    filtered.forEach((e) => {
+      const m = e.totalMinutes ?? e.workMins ?? 0;
+      total += m;
+      missing += (e.missingMinutes || 0);
+      if (e.minutesByRateLabel) {
+        Object.entries(e.minutesByRateLabel).forEach(([l, v]) => (byRate[l] = (byRate[l] || 0) + v));
+      }
+    });
+    return { total, byRate, missing };
+  }, [filtered]);
+
+  const handleExport = () => {
+    const payload = { range, generatedAt: new Date().toISOString(), entries: filtered, totals };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `overtime-pack-${rangeType}-${range.start}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8">
+      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+      <div className="relative w-full max-w-4xl bg-white rounded-2xl shadow-xl flex flex-col max-h-[90vh]">
+        <div className="p-4 border-b border-neutral-100 flex flex-wrap justify-between items-center bg-neutral-50 rounded-t-2xl gap-3">
+          <div className="flex items-center gap-2 sm:gap-4">
+            <h3 className="font-semibold text-lg">Export Pack</h3>
+            <select className="px-2 py-1 rounded border border-neutral-300 text-sm" value={rangeType} onChange={(e) => setRangeType(e.target.value)}>
+              <option value="week">Week</option>
+              <option value="month">Month</option>
+            </select>
+            <input type="date" className="px-2 py-1 rounded border border-neutral-300 text-sm" value={targetDate} onChange={(e) => setTargetDate(e.target.value)} />
+          </div>
+          <div className="flex gap-2">
+            <button onClick={handleExport} className={btnSecondary}>Export JSON</button>
+            <button onClick={() => window.print()} className={btnSecondary}>Print / PDF</button>
+            <button onClick={onClose} className={btnPrimary}>Close</button>
           </div>
         </div>
-        <div className="p-4 border-t border-neutral-100 bg-neutral-50">
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-2">
-            <input className={inputBase + " sm:col-span-2 !mt-0"} placeholder="Name (e.g. Night)" value={name} onChange={e => setName(e.target.value)} />
-            <input type="time" className={inputBase + " !mt-0"} value={start} onChange={e => setStart(e.target.value)} />
-            <input type="time" className={inputBase + " !mt-0"} value={end} onChange={e => setEnd(e.target.value)} />
-            <input className={inputBase + " !mt-0"} placeholder="Rate Label" value={rateLabel} onChange={e => setRateLabel(e.target.value)} />
+        <div className="flex-1 overflow-auto p-6 bg-white rounded-b-2xl">
+          <div id="report-pack-print">
+            <div className="mb-6">
+              <div className="text-2xl font-bold text-neutral-900">Overtime Pack</div>
+              <div className="text-neutral-600">{range.label}</div>
+              <div className="text-sm text-neutral-500 mt-1">{profile.org} • {profile.user}</div>
+            </div>
+            <div className="mb-6 p-4 bg-neutral-50 rounded-xl border border-neutral-200">
+              <div className="text-sm font-semibold text-neutral-700 mb-2">Summary</div>
+              <div className="flex flex-wrap gap-6">
+                <div>
+                  <div className="text-xs text-neutral-500">Total Hours</div>
+                  <div className="text-xl font-bold text-neutral-900">{fmtHours(totals.total)}</div>
+                </div>
+                {Object.entries(totals.byRate).map(([l, v]) => (
+                  <div key={l}>
+                    <div className="text-xs text-neutral-500">{l}</div>
+                    <div className="text-lg font-medium text-neutral-900">{fmtHours(v)}</div>
+                  </div>
+                ))}
+                {totals.missing > 0 && (
+                  <div>
+                    <div className="text-xs text-amber-600">Unclassified</div>
+                    <div className="text-lg font-medium text-amber-700">{fmtHours(totals.missing)}</div>
+                    <button onClick={onOpenRules} className="text-xs underline text-amber-600 hover:text-amber-800">Edit rules</button>
+                  </div>
+                )}
+              </div>
+            </div>
+            <table className="w-full text-sm text-left">
+              <thead className="text-neutral-500 border-b border-neutral-200">
+                <tr><th className="py-2">Date</th><th className="py-2">Start</th><th className="py-2">End</th><th className="py-2">Break</th><th className="py-2">Total</th><th className="py-2">Note</th></tr>
+              </thead>
+              <tbody className="divide-y divide-neutral-100">
+                {filtered.length === 0 && <tr><td colSpan={6} className="py-4 text-center text-neutral-500">No entries in range</td></tr>}
+                {filtered.map((e) => (
+                  <tr key={e.id}>
+                    <td className="py-2 font-medium">{e.date}</td>
+                    <td className="py-2">{e.start}</td>
+                    <td className="py-2">{e.end}</td>
+                    <td className="py-2">{e.breakMins ? e.breakMins + "m" : "-"}</td>
+                    <td className="py-2 font-semibold">
+                      {fmtHours(e.totalMinutes)}
+                      {e.missingMinutes > 0 && <span className="ml-2 text-[10px] bg-amber-100 text-amber-800 px-1 rounded" title="Missing rules">!</span>}
+                    </td>
+                    <td className="py-2 text-neutral-600">{e.note}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-          <button onClick={add} disabled={!name || !start || !end || !rateLabel} className={btnPrimary + " w-full"}>Add Rule</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ExportMenuModal({ open, onClose, actions }) {
+  if (!open) return null;
+  const btnClass = "w-full text-left px-4 py-3 rounded-xl border border-neutral-200 bg-white hover:bg-[#D5FF00] hover:text-black transition text-sm font-medium flex items-center justify-between group";
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8">
+      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+      <div className="relative w-full max-w-sm bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
+        <div className="p-4 border-b border-neutral-100 bg-neutral-50 flex justify-between items-center">
+          <h3 className="font-semibold text-lg text-neutral-900">Export Menu</h3>
+          <button onClick={onClose} className={btnSecondary}>Close</button>
+        </div>
+        <div className="p-4 space-y-2 overflow-y-auto">
+          <button onClick={() => { actions.print(); onClose(); }} className={btnClass}>
+            <span>Print / Save PDF</span><span className="text-neutral-400 group-hover:text-black">→</span>
+          </button>
+          <button onClick={() => { actions.exportCSVEntries(); onClose(); }} className={btnClass}>
+            <span>Export CSV (Entries)</span><span className="text-neutral-400 group-hover:text-black">↓</span>
+          </button>
+          <button onClick={() => { actions.exportCSVSummary(); onClose(); }} className={btnClass}>
+            <span>Export CSV (Summary)</span><span className="text-neutral-400 group-hover:text-black">↓</span>
+          </button>
+          <button onClick={() => { actions.exportJSON(); onClose(); }} className={btnClass}>
+            <span>Export JSON (Full backup)</span><span className="text-neutral-400 group-hover:text-black">↓</span>
+          </button>
+          <label className={btnClass + " cursor-pointer"}>
+            <span>Import JSON</span><span className="text-neutral-400 group-hover:text-black">↑</span>
+            <input type="file" accept="application/json" className="hidden" onChange={actions.importJSON} />
+          </label>
+          <div className="h-px bg-neutral-100 my-2" />
+          <button onClick={() => { actions.copySummary(); onClose(); }} className={btnClass}>
+            <span>Copy Summary</span><span className="text-neutral-400 group-hover:text-black">📋</span>
+          </button>
+          <button onClick={() => { actions.emailSummary(); onClose(); }} className={btnClass}>
+            <span>Email Summary</span><span className="text-neutral-400 group-hover:text-black">✉️</span>
+          </button>
         </div>
       </div>
     </div>
@@ -512,6 +918,8 @@ export default function App() {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const [rulesOpen, setRulesOpen] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
+  const [exportMenuOpen, setExportMenuOpen] = useState(false);
 
   const [toast, setToast] = useState(null);
   const toastTimer = useRef(null);
@@ -528,6 +936,8 @@ export default function App() {
   const [end, setEnd] = useState("");
   const [breakMins, setBreakMins] = useState(0);
   const [note, setNote] = useState("");
+  const [profileOverride, setProfileOverride] = useState("auto");
+  const endRef = useRef(null);
 
   // Persist profile (shared)
   useEffect(() => {
@@ -609,8 +1019,10 @@ export default function App() {
   }, [filtered]);
 
   const computedResult = useMemo(() => {
-    return calculateRules(start, end, breakMins, state.rules);
-  }, [start, end, breakMins, state.rules]);
+    const profile = getProfile(date, state.holidays, profileOverride);
+    const rules = state.rulesByProfile?.[profile] || [];
+    return calculateRules(start, end, breakMins, rules);
+  }, [start, end, breakMins, state.rulesByProfile, state.holidays, date, profileOverride]);
 
   const canSaveEntry = Boolean(date && start && end) && !isMonthLocked;
 
@@ -620,6 +1032,51 @@ export default function App() {
     setEnd("");
     setBreakMins(0);
     setNote("");
+    setProfileOverride("auto");
+  };
+
+  const startNowSession = () => {
+    const now = new Date();
+    const coeff = 1000 * 60 * 5;
+    const rounded = new Date(Math.round(now.getTime() / coeff) * coeff);
+    const hh = String(rounded.getHours()).padStart(2, "0");
+    const mm = String(rounded.getMinutes()).padStart(2, "0");
+    const startStr = `${hh}:${mm}`;
+    
+    const endD = new Date(rounded.getTime() + 30 * 60000);
+    const eh = String(endD.getHours()).padStart(2, "0");
+    const em = String(endD.getMinutes()).padStart(2, "0");
+    const endStr = `${eh}:${em}`;
+
+    const today = isoToday();
+    const ym = today.slice(0, 7);
+
+    if (ym !== state.ui.activeMonth) {
+      setState(s => saveState({ ...s, ui: { ...s.ui, activeMonth: ym } }));
+    }
+
+    setEditingId(null);
+    setDate(today);
+    setStart(startStr);
+    setEnd(endStr);
+    setBreakMins(0);
+    setNote("");
+    setProfileOverride("auto");
+    notify("Draft started (Now)");
+    setTimeout(() => endRef.current?.focus(), 50);
+  };
+
+  const adjustEnd = (mins) => {
+    if (!end) return;
+    const [h, m] = end.split(":").map(Number);
+    const d = new Date();
+    d.setHours(h);
+    d.setMinutes(m + mins);
+    setEnd(`${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") addOrUpdateEntry();
   };
 
   const presetNormalDay = () => {
@@ -627,6 +1084,7 @@ export default function App() {
     setEnd("17:00");
     setBreakMins(60);
     setNote("");
+    setProfileOverride("auto");
     notify("Preset applied");
   };
 
@@ -638,18 +1096,21 @@ export default function App() {
     setEnd(last.end || "");
     setBreakMins(clamp(toNumber(last.breakMins), 0, 24 * 60));
     setNote(last.note || "");
+    setProfileOverride(last.profileOverride || "auto");
     notify("Copied last entry fields");
   };
 
   const addOrUpdateEntry = () => {
     if (!date || !start || !end) return;
 
-    if (!state.rules || state.rules.length === 0) {
-      notify("Rules not set — add at least one window.");
-      return;
+    const profile = getProfile(date, state.holidays, profileOverride);
+    const rules = state.rulesByProfile?.[profile] || [];
+
+    if (rules.length === 0) {
+      notify(`No rules for ${profile}. Saved with 0 OT.`);
     }
 
-    const { totalMinutes, minutesByRateLabel } = calculateRules(start, end, breakMins, state.rules);
+    const { totalMinutes, minutesByRateLabel, missingMinutes } = calculateRules(start, end, breakMins, rules);
     
     if (editingId) {
       setState((prev) =>
@@ -666,6 +1127,8 @@ export default function App() {
                   workMins: totalMinutes, // Keep for legacy compat
                   totalMinutes,
                   minutesByRateLabel,
+                  missingMinutes,
+                  profileOverride,
                   note: String(note || "").trim(),
                   updatedAt: new Date().toISOString(),
                 }
@@ -687,6 +1150,8 @@ export default function App() {
       workMins: totalMinutes,
       totalMinutes,
       minutesByRateLabel,
+      missingMinutes,
+      profileOverride,
       note: String(note || "").trim(),
       createdAt: new Date().toISOString(),
       updatedAt: null,
@@ -698,6 +1163,7 @@ export default function App() {
     setEnd("");
     setBreakMins(0);
     setNote("");
+    setProfileOverride("auto");
   };
 
   const beginEdit = (entry) => {
@@ -713,6 +1179,7 @@ export default function App() {
     setEnd(entry.end || "");
     setBreakMins(clamp(toNumber(entry.breakMins), 0, 24 * 60));
     setNote(entry.note || "");
+    setProfileOverride(entry.profileOverride || "auto");
     notify("Editing entry");
   };
 
@@ -815,6 +1282,44 @@ export default function App() {
     notify("CSV exported");
   };
 
+  const exportCSVSummary = () => {
+    const rows = [
+      ["Category", "Minutes", "Hours"],
+      ["Total", totals.totalOvertime, (totals.totalOvertime / 60).toFixed(2)],
+      ...Object.entries(totals.byRate).map(([l, m]) => [l, m, (m / 60).toFixed(2)]),
+    ];
+    if (totals.missing > 0) {
+      rows.push(["Unclassified", totals.missing, (totals.missing / 60).toFixed(2)]);
+    }
+    const csv = rows.map((r) => r.join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `overtime-summary-${isoToday()}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    notify("Summary CSV exported");
+  };
+
+  const getSummaryText = () => {
+    const lines = ["Overtime Summary"];
+    lines.push(state.ui.useRange ? `Range: ${state.ui.filterFrom} to ${state.ui.filterTo}` : `Month: ${monthLabel(state.ui.activeMonth)}`);
+    lines.push(`Total: ${fmtHours(totals.totalOvertime)}`);
+    Object.entries(totals.byRate).forEach(([l, m]) => lines.push(`${l}: ${fmtHours(m)}`));
+    if (totals.missing > 0) lines.push(`Missing Rules: ${fmtHours(totals.missing)}`);
+    return lines.join("\n");
+  };
+
+  const copySummary = () => {
+    navigator.clipboard.writeText(getSummaryText()).then(() => notify("Copied to clipboard"));
+  };
+
+  const emailSummary = () => {
+    const body = getSummaryText();
+    window.location.href = `mailto:?subject=Overtime Summary&body=${encodeURIComponent(body)}`;
+  };
+
   const openPreview = () => setPreviewOpen(true);
 
   // IMPORTANT: top bar "Print / Save PDF" prints ONLY the preview sheet
@@ -832,6 +1337,7 @@ export default function App() {
           .print\\:shadow-none { box-shadow: none !important; }
           .print\\:border-none { border: none !important; }
           .print\\:p-0 { padding: 0 !important; }
+          #report-pack-print, #report-pack-print * { visibility: visible !important; }
         }
       `}</style>
 
@@ -839,19 +1345,43 @@ export default function App() {
         <style>{`
           @media print {
             body * { visibility: hidden !important; }
-            #ot-print-preview, #ot-print-preview * { visibility: visible !important; }
-            #ot-print-preview { position: absolute !important; left: 0; top: 0; width: 100%; }
+            #ot-print-preview, #ot-print-preview *, #report-pack-print, #report-pack-print * { visibility: visible !important; }
+            #ot-print-preview, #report-pack-print { position: absolute !important; left: 0; top: 0; width: 100%; }
           }
         `}</style>
       ) : null}
 
       <HelpModal open={helpOpen} onClose={() => setHelpOpen(false)} appName="Overtime-It" storageKey={KEY} actions={["Export CSV"]} />
       
-      <RulesModal 
+      <ReportModal open={reportOpen} onClose={() => setReportOpen(false)} entries={entriesSorted} profile={profile} onOpenRules={() => setRulesOpen(true)} />
+      
+      <RulesWizardModal 
         open={rulesOpen} 
         onClose={() => setRulesOpen(false)} 
-        rules={state.rules || []} 
-        onSave={(newRules) => setState(s => saveState({ ...s, rules: newRules }))} 
+        rulesByProfile={state.rulesByProfile} 
+        holidays={state.holidays}
+        onSave={(newRulesByProfile, newHolidays) => {
+          setState(s => saveState({ ...s, rulesByProfile: newRulesByProfile, holidays: newHolidays }));
+          notify("Rules saved");
+        }} 
+      />
+
+      <ExportMenuModal
+        open={exportMenuOpen}
+        onClose={() => setExportMenuOpen(false)}
+        actions={{
+          print: printFromTop,
+          exportCSVEntries: exportCSV,
+          exportCSVSummary,
+          exportJSON,
+          importJSON: (e) => {
+            const file = e.target.files?.[0];
+            if (file) importJSON(file);
+            setExportMenuOpen(false);
+          },
+          copySummary,
+          emailSummary,
+        }}
       />
 
       {/* Preview Modal */}
@@ -898,7 +1428,7 @@ export default function App() {
               <span className="text-[#D5FF00]">It</span>
             </div>
             <div className="text-sm text-neutral-700">Record your overtime with ease</div>
-            <div className="mt-3 h-[2px] w-80 rounded-full bg-gradient-to-r from-lime-400/0 via-lime-400 to-emerald-400/0" />
+            <div className="mt-3 h-[2px] w-80 rounded-full bg-gradient-to-r from-[#D5FF00]/0 via-[#D5FF00] to-[#D5FF00]/0" />
             <div className="mt-3 flex flex-wrap gap-2">
               <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border border-lime-200 bg-lime-50 text-neutral-800">
                 {fmtHours(totals.totalOvertime)} overtime
@@ -911,15 +1441,11 @@ export default function App() {
 
           {/* Top actions + pinned help icon */}
           <div className="w-full sm:w-[860px] relative">
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-5 pr-12">
-              <ActionButton onClick={() => setRulesOpen(true)}>Rules</ActionButton>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-6 pr-12">
+              <ActionButton onClick={() => setRulesOpen(true)}>Rules Wizard</ActionButton>
+              <ActionButton onClick={() => setReportOpen(true)}>Range Report</ActionButton>
               <ActionButton onClick={openPreview} tone="default">Preview</ActionButton>
-              <ActionButton onClick={printFromTop}>Print / Save PDF</ActionButton>
-              <ActionButton onClick={exportCSV}>Export CSV</ActionButton>
-              <ActionButton onClick={exportJSON}>Export</ActionButton>
-              <ActionFileButton onFile={(f) => importJSON(f)} tone="primary">
-                Import
-              </ActionFileButton>
+              <ActionButton onClick={() => setExportMenuOpen(true)}>Export</ActionButton>
             </div>
 
             <div className="absolute right-0 top-0">
@@ -927,6 +1453,22 @@ export default function App() {
             </div>
           </div>
         </div>
+
+        {/* Banner if no rules */}
+        {(!state.rulesByProfile?.weekday?.length && !state.rulesByProfile?.saturday?.length && !state.rulesByProfile?.sundayHoliday?.length) && (
+          <div className="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <div className="font-bold text-amber-800">Overtime rules not set</div>
+              <div className="text-sm text-amber-700">You must set up rules before you can record entries.</div>
+            </div>
+            <button
+              onClick={() => setRulesOpen(true)}
+              className="shrink-0 px-4 py-2 rounded-xl bg-amber-100 text-amber-900 border border-amber-200 font-medium hover:bg-[#D5FF00] hover:text-black transition"
+            >
+              Run Rules Wizard
+            </button>
+          </div>
+        )}
 
         {/* Main grid */}
         <div className="mt-4 grid grid-cols-1 lg:grid-cols-4 gap-4">
@@ -1041,12 +1583,15 @@ export default function App() {
                 <div className="font-semibold text-neutral-800">{editingId ? "Edit entry" : "Add overtime entry"}</div>
                 <div className="text-sm text-neutral-600">
                   Computed: <span className="font-semibold">{fmtHours(computedResult.totalMinutes)}</span>
-                  {(!state.rules || !state.rules.length) && <span className="text-red-600 ml-2">No rules set!</span>}
+                  {(!state.rulesByProfile?.[getProfile(date, state.holidays, profileOverride)]?.length) && <span className="text-red-600 ml-2">No rules for {getProfile(date, state.holidays, profileOverride)}!</span>}
                 </div>
                 {isMonthLocked ? <div className="text-xs text-red-700 mt-1">Month is locked — edits are disabled.</div> : null}
               </div>
 
               <div className="flex flex-wrap gap-2 justify-end">
+                <button className={btnSecondary} onClick={startNowSession} disabled={isMonthLocked}>
+                  Add OT (Now)
+                </button>
                 <button className={btnSecondary} onClick={presetNormalDay} disabled={isMonthLocked}>
                   Preset: Normal day
                 </button>
@@ -1058,6 +1603,9 @@ export default function App() {
                     Cancel edit
                   </button>
                 ) : null}
+                <button className={btnSecondary} onClick={clearDraft} disabled={isMonthLocked}>
+                  Clear
+                </button>
                 <button className={btnPrimary} onClick={addOrUpdateEntry} disabled={!canSaveEntry}>
                   {editingId ? "Save changes" : "Add entry"}
                 </button>
@@ -1067,17 +1615,22 @@ export default function App() {
             <div className="mt-3 grid grid-cols-1 md:grid-cols-5 gap-2">
               <label className="text-sm md:col-span-2">
                 <div className="text-neutral-600">Date</div>
-                <input type="date" className={inputBase} value={date} onChange={(e) => setDate(e.target.value)} disabled={isMonthLocked} />
+                <input type="date" className={inputBase} value={date} onChange={(e) => setDate(e.target.value)} disabled={isMonthLocked} onKeyDown={handleKeyDown} />
               </label>
 
               <label className="text-sm">
                 <div className="text-neutral-600">Start</div>
-                <input type="time" className={inputBase} value={start} onChange={(e) => setStart(e.target.value)} disabled={isMonthLocked} />
+                <input type="time" className={inputBase} value={start} onChange={(e) => setStart(e.target.value)} disabled={isMonthLocked} onKeyDown={handleKeyDown} />
               </label>
 
               <label className="text-sm">
                 <div className="text-neutral-600">End</div>
-                <input type="time" className={inputBase} value={end} onChange={(e) => setEnd(e.target.value)} disabled={isMonthLocked} />
+                <input type="time" className={inputBase} value={end} onChange={(e) => setEnd(e.target.value)} disabled={isMonthLocked} ref={endRef} onKeyDown={handleKeyDown} />
+                <div className="flex gap-1 mt-1">
+                  {[15, 30, 60].map(m => (
+                    <button key={m} onClick={() => adjustEnd(m)} className="px-2 py-0.5 text-xs bg-neutral-100 hover:bg-[#D5FF00] hover:text-black rounded border-neutral-200 transition">+{m}m</button>
+                  ))}
+                </div>
               </label>
 
               <label className="text-sm">
@@ -1090,7 +1643,18 @@ export default function App() {
                   value={breakMins}
                   onChange={(e) => setBreakMins(e.target.value)}
                   disabled={isMonthLocked}
+                  onKeyDown={handleKeyDown}
                 />
+              </label>
+
+              <label className="text-sm">
+                <div className="text-neutral-600">Profile</div>
+                <select className={inputBase} value={profileOverride} onChange={e => setProfileOverride(e.target.value)} disabled={isMonthLocked}>
+                  <option value="auto">Auto</option>
+                  <option value="weekday">Weekday</option>
+                  <option value="saturday">Saturday</option>
+                  <option value="sundayHoliday">Sun/Hol</option>
+                </select>
               </label>
             </div>
 
@@ -1102,6 +1666,7 @@ export default function App() {
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 disabled={isMonthLocked}
+                onKeyDown={handleKeyDown}
               />
             </label>
 
@@ -1153,7 +1718,15 @@ export default function App() {
                             <td className="py-2 pr-2">{e.start || "-"}</td>
                             <td className="py-2 pr-2">{e.end || "-"}</td>
                             <td className="py-2 pr-2">{e.breakMins ? `${e.breakMins}m` : "-"}</td>
-                            <td className="py-2 pr-2 font-semibold">{fmtHours(e.totalMinutes ?? e.workMins ?? 0)}</td>
+                            <td className="py-2 pr-2 font-semibold">
+                              {fmtHours(e.totalMinutes ?? e.workMins ?? 0)}
+                              {e.missingMinutes > 0 && (
+                                <div className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-100 text-amber-800 ml-2" title="Time not covered by rules">
+                                  Missing ({getProfile(e.date, state.holidays, e.profileOverride)}): {e.missingMinutes}m
+                                  <button onClick={() => setRulesOpen(true)} className="ml-1 underline hover:text-amber-900">Edit rules</button>
+                                </div>
+                              )}
+                            </td>
                             <td className="py-2 pr-2">{e.note || ""}</td>
                             <td className="py-2 pr-2 text-right">
                               <div className="flex items-center justify-end gap-2">
@@ -1181,7 +1754,7 @@ export default function App() {
 
         {/* Footer */}
         <div className="mt-6 flex items-center justify-between gap-3 text-sm text-neutral-600">
-          <a className="underline hover:text-neutral-900" href={HUB_URL} target="_blank" rel="noreferrer">
+          <a className="underline hover:text-[#D5FF00]" href={HUB_URL} target="_blank" rel="noreferrer">
             Return to ToolStack hub
           </a>
           <div className="text-xs text-neutral-500">
