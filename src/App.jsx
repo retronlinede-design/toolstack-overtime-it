@@ -17,6 +17,185 @@ const PROFILE_KEY = "toolstack.profile.v1";
 // Put your real ToolStack hub URL here (Wix page)
 const HUB_URL = "https://YOUR-WIX-HUB-URL-HERE";
 
+const translations = {
+  EN: {
+    hub: "HUB",
+    preview: "Preview",
+    export: "Export",
+    help: "Help",
+    userProfile: "User Profile",
+    organization: "Organization",
+    user: "User",
+    storedAt: "Stored at",
+    month: "Month",
+    activeMonth: "Active month",
+    totalHours: "Total Hours",
+    days: "Days",
+    unlockMonth: "Unlock month",
+    lockMonth: "Lock month",
+    lockHelp: "Prevents edits for this month.",
+    filterMode: "Filter mode",
+    customRange: "Custom range",
+    from: "From",
+    to: "To",
+    showingAll: "Showing all entries in the active month.",
+    editEntry: "Edit entry",
+    addEntry: "Add overtime entry",
+    duration: "Duration",
+    monthLocked: "Month is locked — edits are disabled.",
+    copyLast: "Copy last",
+    cancelEdit: "Cancel edit",
+    clear: "Clear",
+    saveChanges: "Save changes",
+    addEntryBtn: "Add entry",
+    date: "Date",
+    startTime: "Start time",
+    endTime: "End time",
+    details: "Details",
+    location: "Location",
+    address: "Address",
+    entries: "Entries",
+    noEntries: "No entries in this view.",
+    edit: "Edit",
+    duplicate: "Duplicate",
+    delete: "Delete",
+    returnHub: "Return to ToolStack hub",
+    storageKey: "Storage key",
+    exportPack: "Export Pack",
+    week: "Week",
+    exportJson: "Export JSON",
+    printPdf: "Print / PDF",
+    close: "Close",
+    overtimePack: "Overtime Pack",
+    summary: "Summary",
+    start: "Start",
+    end: "End",
+    preparedBy: "Prepared by",
+    approvedBy: "Approved by",
+    signature: "Signature",
+    view: "View",
+    overtime: "Overtime",
+    generated: "Generated",
+    exportMenu: "Export Menu",
+    printSavePdf: "Print / Save PDF",
+    exportCsvEntries: "Export CSV (Entries)",
+    exportCsvSummary: "Export CSV (Summary)",
+    exportJsonFull: "Export JSON (Full backup)",
+    importJson: "Import JSON",
+    copySummary: "Copy Summary",
+    emailSummary: "Email Summary",
+    printPreview: "Print preview",
+    overtimeLabel: "overtime",
+    daysLabel: "days",
+    noEntriesRange: "No entries in range",
+    csvExported: "CSV exported",
+    summaryCsvExported: "Summary CSV exported",
+    exported: "Exported",
+    imported: "Imported",
+    importFailed: "Import failed",
+    copiedClipboard: "Copied to clipboard",
+    entryAdded: "Entry added",
+    entryUpdated: "Entry updated",
+    noEntryCopy: "No entry to copy",
+    copiedLast: "Copied last entry fields",
+    editingEntry: "Editing entry",
+    monthLockedMsg: "That month is locked",
+    deleted: "Deleted",
+    duplicated: "Duplicated",
+    monthUnlocked: "Month unlocked",
+    monthLockedToast: "Month locked",
+    confirmDelete: "Delete this entry?",
+  },
+  DE: {
+    hub: "HUB",
+    preview: "Vorschau",
+    export: "Export",
+    help: "Hilfe",
+    userProfile: "Benutzerprofil",
+    organization: "Organisation",
+    user: "Benutzer",
+    storedAt: "Gespeichert unter",
+    month: "Monat",
+    activeMonth: "Aktiver Monat",
+    totalHours: "Gesamtstunden",
+    days: "Tage",
+    unlockMonth: "Monat entsperren",
+    lockMonth: "Monat sperren",
+    lockHelp: "Verhindert Bearbeitungen für diesen Monat.",
+    filterMode: "Filtermodus",
+    customRange: "Benutzerdefiniert",
+    from: "Von",
+    to: "Bis",
+    showingAll: "Zeigt alle Einträge des aktiven Monats.",
+    editEntry: "Eintrag bearbeiten",
+    addEntry: "Überstunden eintragen",
+    duration: "Dauer",
+    monthLocked: "Monat ist gesperrt — Bearbeitung deaktiviert.",
+    copyLast: "Letzten kopieren",
+    cancelEdit: "Abbrechen",
+    clear: "Leeren",
+    saveChanges: "Speichern",
+    addEntryBtn: "Hinzufügen",
+    date: "Datum",
+    startTime: "Startzeit",
+    endTime: "Endzeit",
+    details: "Details",
+    location: "Ort",
+    address: "Adresse",
+    entries: "Einträge",
+    noEntries: "Keine Einträge in dieser Ansicht.",
+    edit: "Bearbeiten",
+    duplicate: "Duplizieren",
+    delete: "Löschen",
+    returnHub: "Zurück zum ToolStack Hub",
+    storageKey: "Speicherschlüssel",
+    exportPack: "Export-Paket",
+    week: "Woche",
+    exportJson: "JSON exportieren",
+    printPdf: "Drucken / PDF",
+    close: "Schließen",
+    overtimePack: "Überstunden-Paket",
+    summary: "Zusammenfassung",
+    start: "Start",
+    end: "Ende",
+    preparedBy: "Erstellt von",
+    approvedBy: "Genehmigt von",
+    signature: "Unterschrift",
+    view: "Ansicht",
+    overtime: "Überstunden",
+    generated: "Erstellt",
+    exportMenu: "Export-Menü",
+    printSavePdf: "Drucken / PDF speichern",
+    exportCsvEntries: "CSV exportieren (Einträge)",
+    exportCsvSummary: "CSV exportieren (Zusammenfassung)",
+    exportJsonFull: "JSON exportieren (Vollständiges Backup)",
+    importJson: "JSON importieren",
+    copySummary: "Zusammenfassung kopieren",
+    emailSummary: "Zusammenfassung per E-Mail",
+    printPreview: "Druckvorschau",
+    overtimeLabel: "Überstunden",
+    daysLabel: "Tage",
+    noEntriesRange: "Keine Einträge im Bereich",
+    csvExported: "CSV exportiert",
+    summaryCsvExported: "Zusammenfassung CSV exportiert",
+    exported: "Exportiert",
+    imported: "Importiert",
+    importFailed: "Import fehlgeschlagen",
+    copiedClipboard: "In die Zwischenablage kopiert",
+    entryAdded: "Eintrag hinzugefügt",
+    entryUpdated: "Eintrag aktualisiert",
+    noEntryCopy: "Kein Eintrag zum Kopieren",
+    copiedLast: "Felder des letzten Eintrags kopiert",
+    editingEntry: "Eintrag bearbeiten",
+    monthLockedMsg: "Dieser Monat ist gesperrt",
+    deleted: "Gelöscht",
+    duplicated: "Dupliziert",
+    monthUnlocked: "Monat entsperrt",
+    monthLockedToast: "Monat gesperrt",
+    confirmDelete: "Diesen Eintrag löschen?",
+  }
+};
+
 // --- utils ---
 const safeParse = (raw, fallback) => {
   try {
@@ -117,25 +296,25 @@ const getMonthRange = (dateStr) => {
 
 // --- UI tokens (Check-It master) ---
 const btnSecondary =
-  "px-3 py-2 rounded-xl bg-white border border-neutral-200 shadow-sm hover:bg-[#D5FF00] hover:text-black active:translate-y-[1px] transition disabled:opacity-50 disabled:cursor-not-allowed";
+  "px-4 py-2 rounded-full bg-white border-2 border-neutral-300 shadow-md hover:bg-[#D5FF00] hover:text-black active:scale-95 transition disabled:opacity-50 disabled:cursor-not-allowed uppercase font-bold tracking-wider text-xs";
 const btnPrimary =
-  "px-3 py-2 rounded-xl bg-neutral-700 text-white border border-neutral-700 shadow-sm hover:bg-[#D5FF00] hover:text-black active:translate-y-[1px] transition disabled:opacity-50 disabled:cursor-not-allowed";
+  "px-4 py-2 rounded-full bg-neutral-800 text-white border-2 border-neutral-800 shadow-md hover:bg-[#D5FF00] hover:text-black active:scale-95 transition disabled:opacity-50 disabled:cursor-not-allowed uppercase font-bold tracking-wider text-xs";
 const btnDanger =
-  "px-3 py-2 rounded-xl bg-red-50 text-red-700 border border-red-200 shadow-sm hover:bg-red-100 active:translate-y-[1px] transition disabled:opacity-50 disabled:cursor-not-allowed";
+  "px-4 py-2 rounded-full bg-red-50 text-red-700 border-2 border-red-200 shadow-md hover:bg-red-100 active:scale-95 transition disabled:opacity-50 disabled:cursor-not-allowed uppercase font-bold tracking-wider text-xs";
 const inputBase =
   "w-full mt-1 px-3 py-2 rounded-xl border border-neutral-200 bg-white focus:outline-none focus:ring-2 focus:ring-lime-400/25 focus:border-neutral-300";
 
 // ---------- Normalized top actions (mobile grid) ----------
 const ACTION_BASE =
-  "print:hidden h-10 w-full rounded-xl text-sm font-medium border transition shadow-sm active:translate-y-[1px] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center";
+  "print:hidden h-20 w-full rounded-full text-sm font-bold border-4 transition shadow-md active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center relative uppercase tracking-wider";
 
 function ActionButton({ children, onClick, tone = "default", disabled, title }) {
   const cls =
     tone === "primary"
-      ? "bg-neutral-700 hover:bg-[#D5FF00] hover:text-black text-white border-neutral-700"
+      ? "bg-neutral-800 hover:bg-[#D5FF00] hover:text-black text-white border-neutral-800"
       : tone === "danger"
       ? "bg-red-50 hover:bg-red-100 text-red-700 border-red-200"
-      : "bg-white hover:bg-[#D5FF00] hover:text-black text-neutral-700 border-neutral-200";
+      : "bg-white hover:bg-[#D5FF00] hover:text-black text-neutral-700 border-neutral-300";
 
   return (
     <button type="button" onClick={onClick} disabled={disabled} title={title} className={`${ACTION_BASE} ${cls}`}>
@@ -147,8 +326,8 @@ function ActionButton({ children, onClick, tone = "default", disabled, title }) 
 function ActionFileButton({ children, onFile, accept = "application/json", tone = "primary", title }) {
   const cls =
     tone === "primary"
-      ? "bg-neutral-700 hover:bg-[#D5FF00] hover:text-black text-white border-neutral-700"
-      : "bg-white hover:bg-[#D5FF00] hover:text-black text-neutral-700 border-neutral-200";
+      ? "bg-neutral-800 hover:bg-[#D5FF00] hover:text-black text-white border-neutral-800"
+      : "bg-white hover:bg-[#D5FF00] hover:text-black text-neutral-700 border-neutral-300";
 
   return (
     <label title={title} className={`${ACTION_BASE} ${cls} cursor-pointer`}>
@@ -176,19 +355,35 @@ function HelpIconButton({ onClick, title = "Help", className = "" }) {
       title={title}
       aria-label={title}
       className={
-        "print:hidden h-10 w-10 shrink-0 rounded-xl border border-neutral-200 bg-white shadow-sm " +
-        "hover:bg-[#D5FF00] active:translate-y-[1px] transition flex items-center justify-center " +
+        "print:hidden h-14 w-14 shrink-0 rounded-full border-4 border-neutral-300 bg-white shadow-md " +
+        "hover:bg-[#D5FF00] active:scale-95 transition flex items-center justify-center " +
         "focus:outline-none focus:ring-2 focus:ring-lime-400/25 focus:border-neutral-300 " +
         className
       }
     >
-      <span className="text-lg font-black text-neutral-800">?</span>
+      <span className="text-lg font-black text-neutral-700">?</span>
+    </button>
+  );
+}
+
+function LanguageButton({ label, active, onClick }) {
+  const cls = active
+    ? "bg-neutral-800 text-white border-neutral-800 hover:bg-[#D5FF00] hover:text-black"
+    : "bg-white text-neutral-700 border-neutral-300 hover:bg-[#D5FF00] hover:text-black";
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`print:hidden h-14 w-14 rounded-full border-4 text-sm font-bold shadow-md active:scale-95 transition flex items-center justify-center ${cls}`}
+    >
+      {label}
     </button>
   );
 }
 
 // ---------- Help Pack v1 (Canonical) ----------
-function HelpModal({ open, onClose, appName = "ToolStack App", storageKey = "(unknown)", actions = [] }) {
+function HelpModal({ open, onClose, appName = "ToolStack App", storageKey = "(unknown)", actions = [], t }) {
   if (!open) return null;
 
   const Section = ({ title, children }) => (
@@ -208,9 +403,9 @@ function HelpModal({ open, onClose, appName = "ToolStack App", storageKey = "(un
   );
 
   const baseActions = [
-    { name: "Preview", desc: "Opens the print-ready view." },
-    { name: "Print / Save PDF", desc: "Prints only the preview sheet. Choose “Save as PDF” to create a file." },
-    { name: "Export", desc: "Downloads a JSON backup file." },
+    { name: t.preview, desc: "Opens the print-ready view." },
+    { name: t.printSavePdf, desc: "Prints only the preview sheet. Choose “Save as PDF” to create a file." },
+    { name: t.export, desc: "Downloads a JSON backup file." },
     { name: "Import", desc: "Restores data from a JSON backup file." },
   ];
 
@@ -237,7 +432,7 @@ function HelpModal({ open, onClose, appName = "ToolStack App", storageKey = "(un
               className={btnSecondary}
               onClick={onClose}
             >
-              Close
+              {t.close}
             </button>
           </div>
 
@@ -311,7 +506,7 @@ function HelpModal({ open, onClose, appName = "ToolStack App", storageKey = "(un
               className={btnSecondary}
               onClick={onClose}
             >
-              Close
+              {t.close}
             </button>
           </div>
       </div>
@@ -325,14 +520,14 @@ function migrateIfNeeded() {
 }
 
 function loadProfile() {
-  return (
-    safeParse(typeof window !== "undefined" ? localStorage.getItem(PROFILE_KEY) : null, null) || {
-      org: "",
-      user: "",
-      language: "EN",
-      logo: "",
-    }
-  );
+  const defaults = {
+    org: "", // blank by default per request
+    user: "",
+    language: "EN",
+    logo: "",
+  };
+  const loaded = safeParse(typeof window !== "undefined" ? localStorage.getItem(PROFILE_KEY) : null, null);
+  return { ...defaults, ...loaded };
 }
 
 function normalizeState(raw) {
@@ -363,18 +558,25 @@ function normalizeState(raw) {
   const cleanEntries = entries
     .filter(Boolean)
     .map((e) => {
-      // Migration: convert totalMinutes to hours if hours is missing
       let hours = toNumber(e.hours);
-      if (!hours && e.totalMinutes) {
+      if (!hours && e.start && e.end) {
+        const mins = minutesBetween(e.start, e.end);
+        hours = mins > 0 ? mins / 60 : 0;
+      } else if (!hours && e.totalMinutes) { // Keep old migration
         hours = e.totalMinutes / 60;
       }
+
       return {
         id: e.id || uid("ot"),
         date: e.date || isoToday(),
+        start: e.start || "",
+        end: e.end || "",
         hours: hours || 0,
         rate: toNumber(e.rate) || 0,
         multiplier: toNumber(e.multiplier) || 1.0,
-        note: typeof e.note === "string" ? e.note : "",
+        details: typeof e.details === "string" ? e.details : (typeof e.note === "string" ? e.note : ""),
+        location: typeof e.location === "string" ? e.location : "",
+        address: typeof e.address === "string" ? e.address : "",
         createdAt: e.createdAt || new Date().toISOString(),
         updatedAt: e.updatedAt || null,
       };
@@ -414,7 +616,7 @@ function saveState(state) {
   return next;
 }
 
-function ReportModal({ open, onClose, entries, profile }) {
+function ReportModal({ open, onClose, entries, profile, t }) {
   if (!open) return null;
   const [rangeType, setRangeType] = useState("week");
   const [targetDate, setTargetDate] = useState(isoToday());
@@ -429,12 +631,10 @@ function ReportModal({ open, onClose, entries, profile }) {
 
   const totals = useMemo(() => {
     let totalHours = 0;
-    let totalPayout = 0;
     filtered.forEach((e) => {
       totalHours += e.hours || 0;
-      totalPayout += (e.hours || 0) * (e.rate || 0) * (e.multiplier || 1);
     });
-    return { totalHours, totalPayout };
+    return { totalHours };
   }, [filtered]);
 
   const handleExport = () => {
@@ -454,53 +654,47 @@ function ReportModal({ open, onClose, entries, profile }) {
       <div className="relative w-full max-w-4xl bg-white rounded-2xl shadow-xl flex flex-col max-h-[90vh]">
         <div className="p-4 border-b border-neutral-100 flex flex-wrap justify-between items-center bg-neutral-50 rounded-t-2xl gap-3">
           <div className="flex items-center gap-2 sm:gap-4">
-            <h3 className="font-semibold text-lg">Export Pack</h3>
+            <h3 className="font-semibold text-lg">{t.exportPack}</h3>
             <select className="px-2 py-1 rounded border border-neutral-300 text-sm" value={rangeType} onChange={(e) => setRangeType(e.target.value)}>
-              <option value="week">Week</option>
-              <option value="month">Month</option>
+              <option value="week">{t.week}</option>
+              <option value="month">{t.month}</option>
             </select>
             <input type="date" className="px-2 py-1 rounded border border-neutral-300 text-sm" value={targetDate} onChange={(e) => setTargetDate(e.target.value)} />
           </div>
           <div className="flex gap-2">
-            <button onClick={handleExport} className={btnSecondary}>Export JSON</button>
-            <button onClick={() => window.print()} className={btnSecondary}>Print / PDF</button>
-            <button onClick={onClose} className={btnPrimary}>Close</button>
+            <button onClick={handleExport} className={btnSecondary}>{t.exportJson}</button>
+            <button onClick={() => window.print()} className={btnSecondary}>{t.printPdf}</button>
+            <button onClick={onClose} className={btnPrimary}>{t.close}</button>
           </div>
         </div>
         <div className="flex-1 overflow-auto p-6 bg-white rounded-b-2xl">
           <div id="report-pack-print">
             <div className="mb-6">
-              <div className="text-2xl font-bold text-neutral-900">Overtime Pack</div>
+              <div className="text-2xl font-bold text-neutral-900">{t.overtimePack}</div>
               <div className="text-neutral-600">{range.label}</div>
               <div className="text-sm text-neutral-500 mt-1">{profile.org} • {profile.user}</div>
             </div>
             <div className="mb-6 p-4 bg-neutral-50 rounded-xl border border-neutral-200">
-              <div className="text-sm font-semibold text-neutral-700 mb-2">Summary</div>
+              <div className="text-sm font-semibold text-neutral-700 mb-2">{t.summary}</div>
               <div className="flex flex-wrap gap-6">
                 <div>
-                  <div className="text-xs text-neutral-500">Total Hours</div>
+                  <div className="text-xs text-neutral-500">{t.totalHours}</div>
                   <div className="text-xl font-bold text-neutral-900">{totals.totalHours.toFixed(2)}h</div>
-                </div>
-                <div>
-                  <div className="text-xs text-neutral-500">Total Payout</div>
-                  <div className="text-xl font-bold text-neutral-900">{fmtMoney(totals.totalPayout)}</div>
                 </div>
               </div>
             </div>
             <table className="w-full text-sm text-left">
               <thead className="text-neutral-500 border-b border-neutral-200">
-                <tr><th className="py-2">Date</th><th className="py-2">Hours</th><th className="py-2">Rate</th><th className="py-2">Mult</th><th className="py-2">Payout</th><th className="py-2">Note</th></tr>
+                <tr><th className="py-2">{t.date}</th><th className="py-2">{t.start}</th><th className="py-2">{t.end}</th><th className="py-2">{t.duration}</th><th className="py-2">{t.details}</th><th className="py-2">{t.location}</th><th className="py-2">{t.address}</th></tr>
               </thead>
               <tbody className="divide-y divide-neutral-100">
-                {filtered.length === 0 && <tr><td colSpan={6} className="py-4 text-center text-neutral-500">No entries in range</td></tr>}
+                {filtered.length === 0 && <tr><td colSpan={7} className="py-4 text-center text-neutral-500">{t.noEntriesRange}</td></tr>}
                 {filtered.map((e) => (
                   <tr key={e.id}>
-                    <td className="py-2 font-medium">{e.date}</td>
-                    <td className="py-2">{e.hours}</td>
-                    <td className="py-2">{e.rate}</td>
-                    <td className="py-2">x{e.multiplier}</td>
-                    <td className="py-2 font-semibold">{fmtMoney(e.hours * e.rate * e.multiplier)}</td>
-                    <td className="py-2 text-neutral-600">{e.note}</td>
+                    <td className="py-2 font-medium">{e.date}</td><td className="py-2">{e.start}</td><td className="py-2">{e.end}</td><td className="py-2">{fmtHours(e.hours * 60)}</td>
+                    <td className="py-2 text-neutral-600">{e.details}</td>
+                    <td className="py-2 text-neutral-600">{e.location}</td>
+                    <td className="py-2 text-neutral-600">{e.address}</td>
                   </tr>
                 ))}
               </tbody>
@@ -512,40 +706,40 @@ function ReportModal({ open, onClose, entries, profile }) {
   );
 }
 
-function ExportMenuModal({ open, onClose, actions }) {
+function ExportMenuModal({ open, onClose, actions, t }) {
   if (!open) return null;
-  const btnClass = "w-full text-left px-4 py-3 rounded-xl border border-neutral-200 bg-white hover:bg-[#D5FF00] hover:text-black transition text-sm font-medium flex items-center justify-between group";
+  const btnClass = "w-full text-left px-4 py-3 rounded-full border-2 border-neutral-300 bg-white hover:bg-[#D5FF00] hover:text-black transition text-sm font-bold uppercase tracking-wider flex items-center justify-between group shadow-sm active:scale-95";
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
       <div className="relative w-full max-w-sm bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
         <div className="p-4 border-b border-neutral-100 bg-neutral-50 flex justify-between items-center">
-          <h3 className="font-semibold text-lg text-neutral-900">Export Menu</h3>
-          <button onClick={onClose} className={btnSecondary}>Close</button>
+          <h3 className="font-semibold text-lg text-neutral-900">{t.exportMenu}</h3>
+          <button onClick={onClose} className={btnSecondary}>{t.close}</button>
         </div>
         <div className="p-4 space-y-2 overflow-y-auto">
           <button onClick={() => { actions.print(); onClose(); }} className={btnClass}>
-            <span>Print / Save PDF</span><span className="text-neutral-400 group-hover:text-black">→</span>
+            <span>{t.printSavePdf}</span><span className="text-neutral-400 group-hover:text-black">→</span>
           </button>
           <button onClick={() => { actions.exportCSVEntries(); onClose(); }} className={btnClass}>
-            <span>Export CSV (Entries)</span><span className="text-neutral-400 group-hover:text-black">↓</span>
+            <span>{t.exportCsvEntries}</span><span className="text-neutral-400 group-hover:text-black">↓</span>
           </button>
           <button onClick={() => { actions.exportCSVSummary(); onClose(); }} className={btnClass}>
-            <span>Export CSV (Summary)</span><span className="text-neutral-400 group-hover:text-black">↓</span>
+            <span>{t.exportCsvSummary}</span><span className="text-neutral-400 group-hover:text-black">↓</span>
           </button>
           <button onClick={() => { actions.exportJSON(); onClose(); }} className={btnClass}>
-            <span>Export JSON (Full backup)</span><span className="text-neutral-400 group-hover:text-black">↓</span>
+            <span>{t.exportJsonFull}</span><span className="text-neutral-400 group-hover:text-black">↓</span>
           </button>
           <label className={btnClass + " cursor-pointer"}>
-            <span>Import JSON</span><span className="text-neutral-400 group-hover:text-black">↑</span>
+            <span>{t.importJson}</span><span className="text-neutral-400 group-hover:text-black">↑</span>
             <input type="file" accept="application/json" className="hidden" onChange={actions.importJSON} />
           </label>
           <div className="h-px bg-neutral-100 my-2" />
           <button onClick={() => { actions.copySummary(); onClose(); }} className={btnClass}>
-            <span>Copy Summary</span><span className="text-neutral-400 group-hover:text-black">📋</span>
+            <span>{t.copySummary}</span><span className="text-neutral-400 group-hover:text-black">📋</span>
           </button>
           <button onClick={() => { actions.emailSummary(); onClose(); }} className={btnClass}>
-            <span>Email Summary</span><span className="text-neutral-400 group-hover:text-black">✉️</span>
+            <span>{t.emailSummary}</span><span className="text-neutral-400 group-hover:text-black">✉️</span>
           </button>
         </div>
       </div>
@@ -562,6 +756,9 @@ export default function App() {
   const [reportOpen, setReportOpen] = useState(false);
   const [exportMenuOpen, setExportMenuOpen] = useState(false);
 
+  const lang = profile.language || "EN";
+  const t = translations[lang] || translations.EN;
+
   const [toast, setToast] = useState(null);
   const toastTimer = useRef(null);
   const notify = (msg) => {
@@ -573,10 +770,16 @@ export default function App() {
   // Draft entry fields
   const [editingId, setEditingId] = useState(null);
   const [date, setDate] = useState(isoToday());
-  const [hours, setHours] = useState("");
-  const [rate, setRate] = useState("");
-  const [multiplier, setMultiplier] = useState(1.0);
-  const [note, setNote] = useState("");
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
+  const [details, setDetails] = useState("");
+  const [location, setLocation] = useState("");
+  const [address, setAddress] = useState("");
+
+  const draftHours = useMemo(() => {
+    const mins = minutesBetween(startTime, endTime);
+    return mins > 0 ? roundToStep(mins, state.settings.roundingStep) / 60 : 0;
+  }, [startTime, endTime, state.settings.roundingStep]);
 
   // Persist profile (shared)
   useEffect(() => {
@@ -639,43 +842,44 @@ export default function App() {
 
   const totals = useMemo(() => {
     let totalHours = 0;
-    let totalPayout = 0;
     const daySet = new Set(filtered.map((e) => e.date));
 
     filtered.forEach((e) => {
       totalHours += e.hours || 0;
-      totalPayout += (e.hours || 0) * (e.rate || 0) * (e.multiplier || 1);
     });
 
-    return { totalHours, totalPayout, daysLogged: daySet.size };
+    return { totalHours, daysLogged: daySet.size };
   }, [filtered]);
 
-  const canSaveEntry = Boolean(date && hours && rate) && !isMonthLocked;
+  const canSaveEntry = Boolean(date && startTime && endTime) && !isMonthLocked;
 
   const clearDraft = () => {
     setEditingId(null);
-    setHours("");
-    // Keep rate/multiplier for convenience
-    setNote("");
+    setStartTime("");
+    setEndTime("");
+    setDetails("");
+    setLocation("");
+    setAddress("");
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === "Enter") addOrUpdateEntry();
+    if (e.key === "Enter" && canSaveEntry) addOrUpdateEntry();
   };
 
   const copyLastEntry = () => {
     const ym = state.ui.activeMonth;
     const last = entriesSorted.find((e) => String(e.date || "").slice(0, 7) === ym) || entriesSorted[0];
-    if (!last) return notify("No entry to copy");
-    setHours(last.hours || "");
-    setRate(last.rate || "");
-    setMultiplier(last.multiplier || 1.0);
-    setNote(last.note || "");
-    notify("Copied last entry fields");
+    if (!last) return notify(t.noEntryCopy);
+    setStartTime(last.start || "");
+    setEndTime(last.end || "");
+    setDetails(last.details || "");
+    setLocation(last.location || "");
+    setAddress(last.address || "");
+    notify(t.copiedLast);
   };
 
   const addOrUpdateEntry = () => {
-    if (!date || !hours || !rate) return;
+    if (!canSaveEntry) return;
     
     if (editingId) {
       setState((prev) =>
@@ -686,17 +890,19 @@ export default function App() {
               ? {
                   ...e,
                   date,
-                  hours: toNumber(hours),
-                  rate: toNumber(rate),
-                  multiplier: toNumber(multiplier),
-                  note: String(note || "").trim(),
+                  start: startTime,
+                  end: endTime,
+                  hours: draftHours,
+                  details: String(details || "").trim(),
+                  location: String(location || "").trim(),
+                  address: String(address || "").trim(),
                   updatedAt: new Date().toISOString(),
                 }
               : e
           ),
         })
       );
-      notify("Entry updated");
+      notify(t.entryUpdated);
       clearDraft();
       return;
     }
@@ -704,50 +910,56 @@ export default function App() {
     const entry = {
       id: uid("ot"),
       date,
-      hours: toNumber(hours),
-      rate: toNumber(rate),
-      multiplier: toNumber(multiplier),
-      note: String(note || "").trim(),
+      start: startTime,
+      end: endTime,
+      hours: draftHours,
+      details: String(details || "").trim(),
+      location: String(location || "").trim(),
+      address: String(address || "").trim(),
       createdAt: new Date().toISOString(),
       updatedAt: null,
     };
 
     setState((prev) => saveState({ ...prev, entries: [entry, ...(prev.entries || [])] }));
-    notify("Entry added");
-    setHours("");
-    setNote("");
+    notify(t.entryAdded);
+    setStartTime("");
+    setEndTime("");
+    setDetails("");
+    setLocation("");
+    setAddress("");
   };
 
   const beginEdit = (entry) => {
     if (!entry) return;
     const ym = String(entry.date || "").slice(0, 7);
     if ((state.lockedMonths || []).includes(ym)) {
-      notify("That month is locked");
+      notify(t.monthLockedMsg);
       return;
     }
     setEditingId(entry.id);
     setDate(entry.date);
-    setHours(entry.hours || "");
-    setRate(entry.rate || "");
-    setMultiplier(entry.multiplier || 1.0);
-    setNote(entry.note || "");
-    notify("Editing entry");
+    setStartTime(entry.start || "");
+    setEndTime(entry.end || "");
+    setDetails(entry.details || "");
+    setLocation(entry.location || "");
+    setAddress(entry.address || "");
+    notify(t.editingEntry);
   };
 
   const deleteEntry = (id) => {
     if (isMonthLocked) return;
-    const ok = window.confirm("Delete this entry?");
+    const ok = window.confirm(t.confirmDelete);
     if (!ok) return;
     setState((prev) => saveState({ ...prev, entries: (prev.entries || []).filter((e) => e.id !== id) }));
     if (editingId === id) clearDraft();
-    notify("Deleted");
+    notify(t.deleted);
   };
 
   const duplicateEntry = (entry) => {
     if (!entry) return;
     const ym = String(entry.date || "").slice(0, 7);
     if ((state.lockedMonths || []).includes(ym)) {
-      notify("That month is locked");
+      notify(t.monthLockedMsg);
       return;
     }
     const copy = {
@@ -757,7 +969,7 @@ export default function App() {
       updatedAt: null,
     };
     setState((prev) => saveState({ ...prev, entries: [copy, ...(prev.entries || [])] }));
-    notify("Duplicated");
+    notify(t.duplicated);
   };
 
   const toggleLockMonth = () => {
@@ -770,7 +982,7 @@ export default function App() {
       return saveState({ ...prev, lockedMonths: Array.from(locked) });
     });
     if (editingId) clearDraft();
-    notify(isMonthLocked ? "Month unlocked" : "Month locked");
+    notify(isMonthLocked ? t.monthUnlocked : t.monthLockedToast);
   };
 
   const exportJSON = () => {
@@ -782,7 +994,7 @@ export default function App() {
     a.download = `toolstack-overtime-it-${APP_VERSION}-${isoToday()}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    notify("Exported");
+    notify(t.exported);
   };
 
   const importJSON = (file) => {
@@ -795,16 +1007,16 @@ export default function App() {
         if (!incoming || !Array.isArray(incoming.entries)) throw new Error("Invalid import file");
         setProfile(parsed?.profile || profile);
         setState(saveState(incoming));
-        notify("Imported");
+        notify(t.imported);
       } catch (e) {
-        alert("Import failed: " + (e?.message || "unknown error"));
+        alert(t.importFailed + ": " + (e?.message || "unknown error"));
       }
     };
     reader.readAsText(file);
   };
 
   const exportCSV = () => {
-    const header = ["date", "hours", "rate", "multiplier", "payout", "note"];
+    const header = ["date", "start", "end", "duration_hours", "details", "location", "address"];
 
     const esc = (v) => {
       const s = String(v ?? "");
@@ -812,14 +1024,14 @@ export default function App() {
     };
 
     const rows = filtered.map((e) => {
-      const p = (e.hours || 0) * (e.rate || 0) * (e.multiplier || 1);
       return [
       e.date,
-      e.hours,
-      e.rate,
-      e.multiplier,
-      p.toFixed(2),
-      e.note || "",
+      e.start || "",
+      e.end || "",
+      e.hours.toFixed(2),
+      e.details || "",
+      e.location || "",
+      e.address || "",
     ]});
 
     const csv = [header.join(","), ...rows.map((r) => r.map(esc).join(","))].join("\n");
@@ -831,14 +1043,13 @@ export default function App() {
     a.download = `toolstack-overtime-it-${state.ui.activeMonth}-entries.csv`;
     a.click();
     URL.revokeObjectURL(url);
-    notify("CSV exported");
+    notify(t.csvExported);
   };
 
   const exportCSVSummary = () => {
     const rows = [
       ["Category", "Value"],
       ["Total Hours", totals.totalHours.toFixed(2)],
-      ["Total Payout", totals.totalPayout.toFixed(2)],
     ];
     const csv = rows.map((r) => r.join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
@@ -848,19 +1059,18 @@ export default function App() {
     a.download = `overtime-summary-${isoToday()}.csv`;
     a.click();
     URL.revokeObjectURL(url);
-    notify("Summary CSV exported");
+    notify(t.summaryCsvExported);
   };
 
   const getSummaryText = () => {
     const lines = ["Overtime Summary"];
     lines.push(state.ui.useRange ? `Range: ${state.ui.filterFrom} to ${state.ui.filterTo}` : `Month: ${monthLabel(state.ui.activeMonth)}`);
     lines.push(`Total Hours: ${totals.totalHours.toFixed(2)}h`);
-    lines.push(`Total Payout: ${fmtMoney(totals.totalPayout)}`);
     return lines.join("\n");
   };
 
   const copySummary = () => {
-    navigator.clipboard.writeText(getSummaryText()).then(() => notify("Copied to clipboard"));
+    navigator.clipboard.writeText(getSummaryText()).then(() => notify(t.copiedClipboard));
   };
 
   const emailSummary = () => {
@@ -899,9 +1109,9 @@ export default function App() {
         `}</style>
       ) : null}
 
-      <HelpModal open={helpOpen} onClose={() => setHelpOpen(false)} appName="Overtime-It" storageKey={KEY} actions={["Export CSV"]} />
+      <HelpModal open={helpOpen} onClose={() => setHelpOpen(false)} appName="Overtime-It" storageKey={KEY} actions={["Export CSV"]} t={t} />
       
-      <ReportModal open={reportOpen} onClose={() => setReportOpen(false)} entries={entriesSorted} profile={profile} />
+      <ReportModal open={reportOpen} onClose={() => setReportOpen(false)} entries={entriesSorted} profile={profile} t={t} />
 
       <ExportMenuModal
         open={exportMenuOpen}
@@ -919,6 +1129,7 @@ export default function App() {
           copySummary,
           emailSummary,
         }}
+        t={t}
       />
 
       {/* Preview Modal */}
@@ -928,13 +1139,13 @@ export default function App() {
 
           <div className="relative w-full max-w-5xl">
             <div className="mb-3 rounded-2xl bg-white border border-neutral-200 shadow-sm p-3 flex items-center justify-between gap-3">
-              <div className="text-lg font-semibold text-neutral-800">Print preview</div>
+              <div className="text-lg font-semibold text-neutral-800">{t.printPreview}</div>
               <div className="flex items-center gap-2">
                 <button className={btnSecondary} onClick={() => window.print()}>
-                  Print / Save PDF
+                  {t.printSavePdf}
                 </button>
                 <button className={btnPrimary} onClick={() => setPreviewOpen(false)}>
-                  Close
+                  {t.close}
                 </button>
               </div>
             </div>
@@ -949,6 +1160,7 @@ export default function App() {
                   totals={totals}
                   entries={filtered}
                   storageKey={KEY}
+                  t={t}
                 />
               </div>
             </div>
@@ -963,57 +1175,61 @@ export default function App() {
             <img
               src={overtimeHeading}
               alt="Overtime-It"
-              className="h-36 sm:h-48 lg:h-56 w-auto object-contain mix-blend-multiply"
+              className="h-32 sm:h-40 lg:h-48 w-auto object-contain mix-blend-multiply"
             />
             <div className="mt-3 flex flex-wrap gap-2">
               <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border border-lime-200 bg-lime-50 text-neutral-800">
-                {totals.totalHours.toFixed(2)}h overtime
+                {totals.totalHours.toFixed(2)}h {t.overtimeLabel}
               </span>
               <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border border-neutral-200 bg-white text-neutral-800">
-                {totals.daysLogged} days
+                {totals.daysLogged} {t.daysLabel}
               </span>
             </div>
           </div>
 
           {/* Top actions + pinned help icon */}
-          <div className="w-full md:w-auto flex gap-2 self-start">
+          <div className="w-full md:w-auto flex flex-wrap gap-2 self-start items-center justify-end">
+            <div className="flex gap-2 mr-2">
+              <LanguageButton label="EN" active={profile.language === "EN"} onClick={() => setProfile({ ...profile, language: "EN" })} />
+              <LanguageButton label="DE" active={profile.language === "DE"} onClick={() => setProfile({ ...profile, language: "DE" })} />
+            </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 w-full md:w-auto">
-              <ActionButton onClick={() => setReportOpen(true)}>Range Report</ActionButton>
-              <ActionButton onClick={openPreview} tone="default">Preview</ActionButton>
-              <ActionButton onClick={() => setExportMenuOpen(true)}>Export</ActionButton>
+              <ActionButton onClick={() => window.open(HUB_URL, "_blank")}>{t.hub}</ActionButton>
+              <ActionButton onClick={openPreview} tone="default">{t.preview}</ActionButton>
+              <ActionButton onClick={() => setExportMenuOpen(true)}>{t.export}</ActionButton>
             </div>
             <HelpIconButton onClick={() => setHelpOpen(true)} />
           </div>
         </div>
 
         {/* Main grid */}
-        <div className="mt-3 grid grid-cols-1 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
           {/* Left column */}
           <div className="space-y-4">
             {/* Profile */}
             <div className="bg-white border border-neutral-200 rounded-2xl shadow-sm p-4 print:shadow-none">
-              <div className="font-semibold text-neutral-800">Profile (shared)</div>
+              <div className="font-semibold text-neutral-800">{t.userProfile}</div>
               <div className="mt-3 space-y-2">
                 <label className="block text-sm">
-                  <div className="text-neutral-600">Organization</div>
+                  <div className="text-neutral-600">{t.organization}</div>
                   <input className={inputBase} value={profile.org} onChange={(e) => setProfile({ ...profile, org: e.target.value })} />
                 </label>
                 <label className="block text-sm">
-                  <div className="text-neutral-600">User</div>
+                  <div className="text-neutral-600">{t.user}</div>
                   <input className={inputBase} value={profile.user} onChange={(e) => setProfile({ ...profile, user: e.target.value })} />
                 </label>
                 <div className="pt-2 text-xs text-neutral-500">
-                  Stored at <span className="font-mono">{PROFILE_KEY}</span>
+                  {t.storedAt} <span className="font-mono">{PROFILE_KEY}</span>
                 </div>
               </div>
             </div>
 
             {/* Month + settings */}
             <div className="bg-white border border-neutral-200 rounded-2xl shadow-sm p-4 print:shadow-none">
-              <div className="font-semibold text-neutral-800">Month</div>
+              <div className="font-semibold text-neutral-800">{t.month}</div>
               <div className="mt-3">
                 <label className="block text-sm">
-                  <div className="text-neutral-600">Active month</div>
+                  <div className="text-neutral-600">{t.activeMonth}</div>
                   <input
                     type="month"
                     className={inputBase}
@@ -1027,42 +1243,41 @@ export default function App() {
               <div className="mt-4 rounded-2xl border border-neutral-200 p-4">
                 <div className="flex items-center justify-between gap-3">
                   <div>
-                    <div className="text-sm text-neutral-600">Total Payout</div>
-                    <div className="text-2xl font-semibold text-neutral-900 mt-1">{fmtMoney(totals.totalPayout)}</div>
+                    <div className="text-sm text-neutral-600">{t.totalHours}</div>
+                    <div className="text-2xl font-semibold text-neutral-900 mt-1">{totals.totalHours.toFixed(2)}h</div>
                   </div>
                 </div>
                 <div className="mt-3 pt-3 border-t border-neutral-200 space-y-1">
-                  <div className="flex justify-between text-sm"><span className="text-neutral-600">Hours</span><span className="font-medium text-neutral-900">{totals.totalHours.toFixed(2)}h</span></div>
-                  <div className="flex justify-between text-sm"><span className="text-neutral-600">Days</span><span className="font-medium text-neutral-900">{totals.daysLogged}</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-neutral-600">{t.days}</span><span className="font-medium text-neutral-900">{totals.daysLogged}</span></div>
                 </div>
               </div>
 
               <div className="mt-4">
                 <div className="flex items-center justify-between gap-2">
                   <button className={isMonthLocked ? btnSecondary : btnDanger} onClick={toggleLockMonth}>
-                    {isMonthLocked ? "Unlock month" : "Lock month"}
+                    {isMonthLocked ? t.unlockMonth : t.lockMonth}
                   </button>
-                  <div className="text-xs text-neutral-500">Prevents edits for this month.</div>
+                  <div className="text-xs text-neutral-500">{t.lockHelp}</div>
                 </div>
               </div>
 
               <div className="mt-4 rounded-2xl border border-neutral-200 p-3">
                 <div className="flex items-center justify-between">
-                  <div className="text-sm font-semibold text-neutral-900">Filter mode</div>
+                  <div className="text-sm font-semibold text-neutral-900">{t.filterMode}</div>
                   <label className="text-sm flex items-center gap-2">
                     <input
                       type="checkbox"
                       checked={state.ui.useRange}
                       onChange={(e) => setState((s) => saveState({ ...s, ui: { ...s.ui, useRange: e.target.checked } }))}
                     />
-                    <span className="text-neutral-700">Custom range</span>
+                    <span className="text-neutral-700">{t.customRange}</span>
                   </label>
                 </div>
 
                 {state.ui.useRange ? (
                   <div className="mt-3 grid grid-cols-2 gap-2">
                     <label className="text-sm">
-                      <div className="text-neutral-600">From</div>
+                      <div className="text-neutral-600">{t.from}</div>
                       <input
                         type="date"
                         className={inputBase}
@@ -1071,7 +1286,7 @@ export default function App() {
                       />
                     </label>
                     <label className="text-sm">
-                      <div className="text-neutral-600">To</div>
+                      <div className="text-neutral-600">{t.to}</div>
                       <input
                         type="date"
                         className={inputBase}
@@ -1081,26 +1296,27 @@ export default function App() {
                     </label>
                   </div>
                 ) : (
-                  <div className="mt-2 text-xs text-neutral-600">Showing all entries in the active month.</div>
+                  <div className="mt-2 text-xs text-neutral-600">{t.showingAll}</div>
                 )}
               </div>
             </div>
           </div>
 
           {/* Main */}
-          <div className="bg-white border border-neutral-200 rounded-2xl shadow-sm p-4 lg:col-span-3 print:shadow-none">
+          <div className="lg:col-span-3 flex flex-col gap-4">
+            <div className="bg-white border border-neutral-200 rounded-2xl shadow-sm p-4 print:shadow-none">
             {/* Add / Edit entry */}
             <div className="flex flex-wrap items-end justify-between gap-3">
               <div>
                 <div className="font-semibold text-neutral-800">{editingId ? "Edit entry" : "Add overtime entry"}</div>
                 <div className="text-sm text-neutral-600 mt-1">
-                  Payout: {hours || 0} × {rate || 0} × {multiplier} = <span className="font-semibold text-neutral-900">{fmtMoney((hours || 0) * (rate || 0) * multiplier)}</span>
+                  Duration: <span className="font-semibold text-neutral-900">{draftHours.toFixed(2)}h</span>
                 </div>
                 {isMonthLocked ? <div className="text-xs text-red-700 mt-1">Month is locked — edits are disabled.</div> : null}
               </div>
 
-              <div className="flex flex-wrap gap-2 justify-end">
-                <button className={btnSecondary} onClick={copyLastEntry} disabled={isMonthLocked}>
+              <div className="flex flex-wrap gap-2 justify-end items-center">
+                <button className={btnSecondary} onClick={copyLastEntry} disabled={isMonthLocked || entriesSorted.length === 0}>
                   Copy last
                 </button>
                 {editingId ? (
@@ -1108,7 +1324,11 @@ export default function App() {
                     Cancel edit
                   </button>
                 ) : null}
-                <button className={btnSecondary} onClick={clearDraft} disabled={isMonthLocked}>
+                <button
+                  className={btnSecondary}
+                  onClick={clearDraft}
+                  disabled={isMonthLocked || (!startTime && !endTime && !details && !location && !address)}
+                >
                   Clear
                 </button>
                 <button className={btnPrimary} onClick={addOrUpdateEntry} disabled={!canSaveEntry}>
@@ -1117,54 +1337,64 @@ export default function App() {
               </div>
             </div>
 
-            <div className="mt-3 grid grid-cols-1 md:grid-cols-5 gap-2">
-              <label className="text-sm md:col-span-2">
+            <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-2">
+              <label className="text-sm">
                 <div className="text-neutral-600">Date</div>
                 <input type="date" className={inputBase} value={date} onChange={(e) => setDate(e.target.value)} disabled={isMonthLocked} onKeyDown={handleKeyDown} />
               </label>
 
               <label className="text-sm">
-                <div className="text-neutral-600">Hours</div>
-                <input type="number" step="0.25" className={inputBase} value={hours} onChange={(e) => setHours(e.target.value)} disabled={isMonthLocked} onKeyDown={handleKeyDown} />
+                <div className="text-neutral-600">Start time</div>
+                <input type="time" className={inputBase} value={startTime} onChange={(e) => setStartTime(e.target.value)} disabled={isMonthLocked} onKeyDown={handleKeyDown} />
               </label>
 
               <label className="text-sm">
-                <div className="text-neutral-600">Rate</div>
-                <input type="number" step="0.5" className={inputBase} value={rate} onChange={(e) => setRate(e.target.value)} disabled={isMonthLocked} onKeyDown={handleKeyDown} />
+                <div className="text-neutral-600">End time</div>
+                <input type="time" className={inputBase} value={endTime} onChange={(e) => setEndTime(e.target.value)} disabled={isMonthLocked} onKeyDown={handleKeyDown} />
               </label>
-
-              <label className="text-sm">
-                <div className="text-neutral-600">Multiplier</div>
-                <select className={inputBase} value={multiplier} onChange={e => setMultiplier(e.target.value)} disabled={isMonthLocked}>
-                  <option value="1">1.0x</option>
-                  <option value="1.25">1.25x</option>
-                  <option value="1.5">1.5x</option>
-                  <option value="2">2.0x</option>
-                </select>
-              </label>
-              <div className="hidden md:block"></div>
             </div>
 
-            <label className="block text-sm mt-2">
-              <div className="text-neutral-600">Note</div>
-              <input
-                className={inputBase}
-                placeholder="e.g., reception cover, late run, VIP duty"
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-                disabled={isMonthLocked}
-                onKeyDown={handleKeyDown}
-              />
-            </label>
+            <div className="mt-2 grid grid-cols-1 md:grid-cols-3 gap-2">
+              <label className="block text-sm">
+                <div className="text-neutral-600">Details</div>
+                <textarea
+                  className={inputBase}
+                  placeholder="e.g., reception cover, late run, VIP duty"
+                  value={details}
+                  onChange={(e) => setDetails(e.target.value)}
+                  disabled={isMonthLocked}
+                  rows={3}
+                />
+              </label>
+              <label className="block text-sm">
+                <div className="text-neutral-600">Location</div>
+                <input
+                  className={inputBase}
+                  placeholder="e.g., Main building, Site B"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  disabled={isMonthLocked}
+                  onKeyDown={handleKeyDown}
+                />
+              </label>
+              <label className="block text-sm">
+                <div className="text-neutral-600">Address</div>
+                <input
+                  className={inputBase}
+                  placeholder="e.g., 123 Main St"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  disabled={isMonthLocked}
+                  onKeyDown={handleKeyDown}
+                />
+              </label>
+            </div>
 
             {/* Entries */}
             <div className="mt-4 rounded-2xl border border-neutral-200 bg-neutral-50 p-3">
               <div className="flex flex-wrap items-end justify-between gap-3">
                 <div>
                   <div className="font-semibold text-neutral-800">Entries</div>
-                  <div className="text-sm text-neutral-600">
-                    Total: <span className="font-semibold">{fmtMoney(totals.totalPayout)}</span>
-                  </div>
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -1178,19 +1408,20 @@ export default function App() {
                 <table className="w-full text-sm">
                   <thead className="text-left text-neutral-600">
                     <tr className="border-b">
-                      <th className="py-2 pr-2">Date</th>
-                      <th className="py-2 pr-2">Hours</th>
-                      <th className="py-2 pr-2">Rate</th>
-                      <th className="py-2 pr-2">Mult</th>
-                      <th className="py-2 pr-2">Payout</th>
-                      <th className="py-2 pr-2">Note</th>
-                      <th className="py-2 pr-2 text-right">Actions</th>
+                      <th className="py-2 pr-2 font-semibold">Date</th>
+                      <th className="py-2 pr-2 font-semibold">Start</th>
+                      <th className="py-2 pr-2 font-semibold">End</th>
+                      <th className="py-2 pr-2 font-semibold">Duration</th>
+                      <th className="py-2 pr-2 font-semibold">Details</th>
+                      <th className="py-2 pr-2 font-semibold">Location</th>
+                      <th className="py-2 pr-2 font-semibold">Address</th>
+                      <th className="py-2 pr-2 text-right font-semibold">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filtered.length === 0 ? (
                       <tr>
-                        <td colSpan={7} className="py-4 text-neutral-500">
+                        <td colSpan={8} className="py-4 text-neutral-500 text-center">
                           No entries in this view.
                         </td>
                       </tr>
@@ -1202,11 +1433,12 @@ export default function App() {
                         return (
                           <tr key={e.id} className={`border-b last:border-b-0 ${selected ? "bg-lime-50" : ""}`}>
                             <td className="py-2 pr-2 font-medium">{e.date}</td>
-                            <td className="py-2 pr-2">{e.hours}</td>
-                            <td className="py-2 pr-2">{e.rate}</td>
-                            <td className="py-2 pr-2">x{e.multiplier}</td>
-                            <td className="py-2 pr-2 font-semibold">{fmtMoney(e.hours * e.rate * e.multiplier)}</td>
-                            <td className="py-2 pr-2">{e.note || ""}</td>
+                            <td className="py-2 pr-2">{e.start}</td>
+                            <td className="py-2 pr-2">{e.end}</td>
+                            <td className="py-2 pr-2">{fmtHours(e.hours * 60)}</td>
+                            <td className="py-2 pr-2 text-neutral-600">{e.details || ""}</td>
+                            <td className="py-2 pr-2 text-neutral-600">{e.location || ""}</td>
+                            <td className="py-2 pr-2 text-neutral-600">{e.address || ""}</td>
                             <td className="py-2 pr-2 text-right">
                               <div className="flex items-center justify-end gap-2">
                                 <button className={btnSecondary} onClick={() => beginEdit(e)} disabled={locked} title={locked ? "Month locked" : ""}>
@@ -1228,6 +1460,7 @@ export default function App() {
                 </table>
               </div>
             </div>
+          </div>
           </div>
         </div>
 
@@ -1289,42 +1522,32 @@ function ReportSheet({ profile, month, useRange, range, totals, entries, storage
         </div>
       </div>
 
-      <div className="mt-4 rounded-2xl border border-neutral-200 p-4">
-        <div className="font-semibold text-neutral-900">Totals</div>
-        <div className="mt-2 grid grid-cols-1 md:grid-cols-4 gap-3 text-sm">
-          <div>
-            <div className="text-neutral-600">Total Payout</div>
-            <div className="font-semibold text-neutral-900">{fmtMoney(totals.totalPayout)}</div>
-          </div>
-        </div>
-      </div>
-
       <div className="mt-4 overflow-hidden rounded-2xl border border-neutral-200">
         <table className="min-w-full text-sm">
           <thead className="bg-neutral-50">
             <tr>
-              <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-600">Date</th>
-              <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-600">Hours</th>
-              <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-600">Rate</th>
-              <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-600">Payout</th>
-              <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-600">Note</th>
+              <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-600">Date</th><th className="px-3 py-2 text-left text-xs font-semibold text-neutral-600">Start</th><th className="px-3 py-2 text-left text-xs font-semibold text-neutral-600">End</th>
+              <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-600">Duration</th>
+              <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-600">Details</th>
+              <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-600">Location</th>
+              <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-600">Address</th>
             </tr>
           </thead>
           <tbody>
             {entries.length === 0 ? (
               <tr>
-                <td colSpan={6} className="px-3 py-4 text-neutral-500">
+                <td colSpan={7} className="px-3 py-4 text-neutral-500">
                   No entries.
                 </td>
               </tr>
             ) : (
               entries.map((e) => (
                 <tr key={e.id} className="border-t border-neutral-200">
-                  <td className="px-3 py-2 font-medium">{e.date}</td>
-                  <td className="px-3 py-2">{e.hours}</td>
-                  <td className="px-3 py-2">{e.rate} (x{e.multiplier})</td>
-                  <td className="px-3 py-2 font-semibold">{fmtMoney(e.hours * e.rate * e.multiplier)}</td>
-                  <td className="px-3 py-2">{e.note || ""}</td>
+                  <td className="px-3 py-2 font-medium">{e.date}</td><td className="px-3 py-2">{e.start}</td><td className="px-3 py-2">{e.end}</td>
+                  <td className="px-3 py-2">{fmtHours(e.hours * 60)}</td>
+                  <td className="px-3 py-2 text-neutral-600">{e.details || ""}</td>
+                  <td className="px-3 py-2 text-neutral-600">{e.location || ""}</td>
+                  <td className="px-3 py-2 text-neutral-600">{e.address || ""}</td>
                 </tr>
               ))
             )}
