@@ -649,12 +649,12 @@ function ReportModal({ open, onClose, entries, profile, t }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-8">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-      <div className="relative w-full max-w-4xl bg-white rounded-2xl shadow-xl flex flex-col max-h-[90vh]">
-        <div className="p-4 border-b border-neutral-100 flex flex-wrap justify-between items-center bg-neutral-50 rounded-t-2xl gap-3">
+      <div className="relative w-full max-w-4xl bg-white rounded-2xl shadow-xl flex flex-col max-h-[95vh]">
+        <div className="p-3 sm:p-4 border-b border-neutral-100 flex flex-wrap justify-between items-center bg-neutral-50 rounded-t-2xl gap-3 shrink-0">
           <div className="flex items-center gap-2 sm:gap-4">
-            <h3 className="font-semibold text-lg">{t.exportPack}</h3>
+            <h3 className="font-semibold text-sm sm:text-lg">{t.exportPack}</h3>
             <select className="px-2 py-1 rounded border border-neutral-300 text-sm" value={rangeType} onChange={(e) => setRangeType(e.target.value)}>
               <option value="week">{t.week}</option>
               <option value="month">{t.month}</option>
@@ -667,7 +667,7 @@ function ReportModal({ open, onClose, entries, profile, t }) {
             <button onClick={onClose} className={btnPrimary}>{t.close}</button>
           </div>
         </div>
-        <div className="flex-1 overflow-auto p-6 bg-white rounded-b-2xl">
+        <div className="flex-1 overflow-auto p-3 sm:p-6 bg-white rounded-b-2xl">
           <div id="report-pack-print">
             <div className="mb-6">
               <div className="text-2xl font-bold text-neutral-900">{t.overtimePack}</div>
@@ -1128,14 +1128,21 @@ export default function App() {
     <div className="min-h-screen bg-neutral-50 text-neutral-800">
       <style>{`
         @media print {
-          @page { size: auto; margin: 0; }
-          body { background: white !important; margin: 15mm; }
+          @page { size: auto; margin: 5mm; }
+          body { background: white !important; margin: 0; padding: 0; }
           .print\\:hidden { display: none !important; }
           .print\\:shadow-none { box-shadow: none !important; }
           .print\\:border-none { border: none !important; }
           .print\\:p-0 { padding: 0 !important; }
-          #report-pack-print, #report-pack-print * { visibility: visible !important; }
+          #report-pack-print, #report-pack-print *, #ot-print-preview, #ot-print-preview * { 
+            visibility: visible !important; 
+            font-size: 12px !important;
+          }
+          #ot-print-preview th, #ot-print-preview td, #report-pack-print th, #report-pack-print td { 
+            padding: 4px 2px !important; 
+          }
           .mx-auto { max-width: 100% !important; }
+          .mt-4, .mt-6, .mb-6 { margin-top: 0.5rem !important; margin-bottom: 0.5rem !important; }
         }
       `}</style>
 
@@ -1180,13 +1187,13 @@ export default function App() {
 
       {/* Preview Modal */}
       {previewOpen ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-8">
           <div className="absolute inset-0 bg-black/40" onClick={() => setPreviewOpen(false)} />
 
-          <div className="relative w-full max-w-5xl">
-            <div className="mb-3 rounded-2xl bg-white border border-neutral-200 shadow-sm p-3 flex items-center justify-between gap-3">
-              <div className="text-lg font-semibold text-neutral-800">{t.printPreview}</div>
-              <div className="flex items-center gap-2">
+          <div className="relative w-full max-w-5xl flex flex-col max-h-[95vh]">
+            <div className="mb-2 rounded-2xl bg-white border border-neutral-200 shadow-sm p-2 sm:p-3 flex items-center justify-between gap-3 shrink-0">
+              <div className="text-sm sm:text-lg font-semibold text-neutral-800 truncate">{t.printPreview}</div>
+              <div className="flex items-center gap-1 sm:gap-2">
                 <button className={btnSecondary} onClick={() => window.print()}>
                   {t.printSavePdf}
                 </button>
@@ -1196,8 +1203,8 @@ export default function App() {
               </div>
             </div>
 
-            <div className="rounded-2xl bg-white border border-neutral-200 shadow-xl overflow-auto max-h-[80vh]">
-              <div id="ot-print-preview" className="p-6">
+            <div className="rounded-2xl bg-white border border-neutral-200 shadow-xl overflow-auto flex-1">
+              <div id="ot-print-preview" className="p-3 sm:p-6">
                 <ReportSheet
                   profile={profile}
                   month={state.ui.activeMonth}
@@ -1561,7 +1568,7 @@ export default function App() {
 
 function ReportSheet({ profile, month, useRange, range, totals, entries, storageKey }) {
   return (
-    <div className="mx-auto max-w-4xl print:max-w-none print:m-0">
+    <div className="mx-auto max-w-4xl print:max-w-none print:m-0 print:p-0">
       <div className="flex items-start justify-between gap-4">
         <div>
           <div className="text-2xl font-semibold text-neutral-900">Overtime Report</div>
