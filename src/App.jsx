@@ -306,7 +306,7 @@ const inputBase =
 
 // ---------- Normalized top actions (mobile grid) ----------
 const ACTION_BASE =
-  "print:hidden h-20 w-full rounded-full text-sm font-bold border-4 transition shadow-md active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center relative uppercase tracking-wider";
+  "print:hidden h-10 md:h-20 w-full rounded-full text-[10px] md:text-sm font-bold border-2 md:border-4 transition shadow-md active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center relative uppercase tracking-wider";
 
 function ActionButton({ children, onClick, tone = "default", disabled, title }) {
   const cls =
@@ -355,13 +355,13 @@ function HelpIconButton({ onClick, title = "Help", className = "" }) {
       title={title}
       aria-label={title}
       className={
-        "print:hidden h-14 w-14 shrink-0 rounded-full border-4 border-neutral-300 bg-white shadow-md " +
+        "print:hidden h-10 w-10 md:h-14 md:w-14 shrink-0 rounded-full border-2 md:border-4 border-neutral-300 bg-white shadow-md " +
         "hover:bg-[#D5FF00] active:scale-95 transition flex items-center justify-center " +
         "focus:outline-none focus:ring-2 focus:ring-lime-400/25 focus:border-neutral-300 " +
         className
       }
     >
-      <span className="text-lg font-black text-neutral-700">?</span>
+      <span className="text-sm md:text-lg font-black text-neutral-700">?</span>
     </button>
   );
 }
@@ -375,7 +375,7 @@ function LanguageButton({ label, active, onClick }) {
     <button
       type="button"
       onClick={onClick}
-      className={`print:hidden h-14 w-14 rounded-full border-4 text-sm font-bold shadow-md active:scale-95 transition flex items-center justify-center ${cls}`}
+      className={`print:hidden h-10 w-10 md:h-14 md:w-14 rounded-full border-2 md:border-4 text-[10px] md:text-sm font-bold shadow-md active:scale-95 transition flex items-center justify-center ${cls}`}
     >
       {label}
     </button>
@@ -1128,12 +1128,14 @@ export default function App() {
     <div className="min-h-screen bg-neutral-50 text-neutral-800">
       <style>{`
         @media print {
-          body { background: white !important; }
+          @page { size: auto; margin: 0; }
+          body { background: white !important; margin: 15mm; }
           .print\\:hidden { display: none !important; }
           .print\\:shadow-none { box-shadow: none !important; }
           .print\\:border-none { border: none !important; }
           .print\\:p-0 { padding: 0 !important; }
           #report-pack-print, #report-pack-print * { visibility: visible !important; }
+          .mx-auto { max-width: 100% !important; }
         }
       `}</style>
 
@@ -1142,7 +1144,13 @@ export default function App() {
           @media print {
             body * { visibility: hidden !important; }
             #ot-print-preview, #ot-print-preview *, #report-pack-print, #report-pack-print * { visibility: visible !important; }
-            #ot-print-preview, #report-pack-print { position: absolute !important; left: 0; top: 0; width: 100%; }
+            #ot-print-preview, #report-pack-print { 
+              position: absolute !important; 
+              left: 0; 
+              top: 0; 
+              width: 100%; 
+              page-break-inside: avoid;
+            }
           }
         `}</style>
       ) : null}
@@ -1553,7 +1561,7 @@ export default function App() {
 
 function ReportSheet({ profile, month, useRange, range, totals, entries, storageKey }) {
   return (
-    <div className="mx-auto max-w-4xl">
+    <div className="mx-auto max-w-4xl print:max-w-none print:m-0">
       <div className="flex items-start justify-between gap-4">
         <div>
           <div className="text-2xl font-semibold text-neutral-900">Overtime Report</div>
