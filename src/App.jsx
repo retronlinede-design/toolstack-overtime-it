@@ -751,6 +751,30 @@ export default function App() {
   const [profile, setProfile] = useState(loadProfile());
   const [state, setState] = useState(loadState());
 
+  // --- Stopwatch / Live Tracker State ---
+  const [timerStartAt, setTimerStartAt] = useState(null);
+  const [elapsedTime, setElapsedTime] = useState(0);
+
+  useEffect(() => {
+    let timer;
+    if (timerStartAt) {
+      timer = setInterval(() => {
+        setElapsedTime(Math.floor((Date.now() - timerStartAt) / 1000));
+      }, 1000);
+    } else {
+      setElapsedTime(0);
+    }
+    return () => clearInterval(timer);
+  }, [timerStartAt]);
+
+  const formatElapsed = (sec) => {
+    const h = Math.floor(sec / 3600);
+    const m = Math.floor((sec % 3600) / 60);
+    const s = sec % 60;
+    const hPart = h > 0 ? `${h}h ` : "";
+    return `${hPart}${String(m).padStart(2, "0")}m ${String(s).padStart(2, "0")}s`;
+  };
+
   const [previewOpen, setPreviewOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
@@ -864,6 +888,20 @@ export default function App() {
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && canSaveEntry) addOrUpdateEntry();
+  };
+
+  const handleStartTimer = () => {
+    const now = new Date();
+    setTimerStartAt(now.getTime());
+    setDate(isoToday());
+    setStartTime(now.toTimeString().slice(0, 5));
+    setEndTime("");
+  };
+
+  const handleStopTimer = () => {
+    const now = new Date();
+    setEndTime(now.toTimeString().slice(0, 5));
+    setTimerStartAt(null);
   };
 
   const copyLastEntry = () => {
@@ -1336,6 +1374,35 @@ export default function App() {
                 </button>
               </div>
             </div>
+
+            {/* Stopwatch Section (Visual Clock System) */}
+            {!editingId && !isMonthLocked && (
+              <div className="mt-4 p-4 rounded-3xl bg-neutral-900 text-white flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl border-4 border-[#D5FF00]/20 transition-all duration-500">
+                <div className="flex items-center gap-4">
+                  <div className={`h-14 w-14 rounded-full border-4 flex items-center justify-center transition-all ${timerStartAt ? 'border-[#D5FF00] shadow-[0_0_15px_rgba(213,255,0,0.4)]' : 'border-neutral-700'}`}>
+                    <div className={`h-3 w-3 rounded-full ${timerStartAt ? 'bg-[#D5FF00] animate-pulse' : 'bg-neutral-700'}`} />
+                  </div>
+                  <div>
+                    <div className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-500">Live Tracker</div>
+                    <div className="text-3xl font-mono font-bold tracking-tighter tabular-nums leading-none">
+                      {timerStartAt ? formatElapsed(elapsedTime) : "00m 00s"}
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex gap-2 w-full sm:w-auto">
+                  {!timerStartAt ? (
+                    <button onClick={handleStartTimer} className="flex-1 sm:flex-none px-10 py-4 rounded-full bg-[#D5FF00] text-black font-black uppercase tracking-widest text-xs hover:scale-105 active:scale-95 transition shadow-lg">
+                      Start Timer
+                    </button>
+                  ) : (
+                    <button onClick={handleStopTimer} className="flex-1 sm:flex-none px-10 py-4 rounded-full bg-red-500 text-white font-black uppercase tracking-widest text-xs hover:scale-105 active:scale-95 transition shadow-lg">
+                      Stop & Log
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
 
             <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-2">
               <label className="text-sm">
