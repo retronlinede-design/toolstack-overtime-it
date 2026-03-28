@@ -105,6 +105,56 @@ const translations = {
     monthUnlocked: "Month unlocked",
     monthLockedToast: "Month locked",
     confirmDelete: "Delete this entry?",
+    helpPackTitle: "ToolStack • Help Pack v1",
+    howDataWorks: "how your data works",
+    aboutAppTitle: "About Overtime-It",
+    aboutAppDesc: "Overtime-It is a local-first overtime and time tracking tool designed to help you log hours, calculate totals, and generate clean print-ready summaries. It runs entirely in your browser with no accounts, no cloud storage, and no automatic data sharing.",
+    howItWorksTitle: "How Overtime-It Works",
+    howItWorksDesc: "Overtime-It follows a simple workflow:",
+    step1: "1. Log Overtime Entries",
+    step1Desc: "Add entries with date, hours, rate, and multiplier.",
+    step2: "2. Review Totals",
+    step2Desc: "Overtime-It calculates payout based on your entries.",
+    step3: "3. Preview & Print",
+    step3Desc: "Generate a print-ready overtime report using Preview.",
+    step4: "4. Export a Backup",
+    step4Desc: "Export a JSON backup regularly.",
+    dataPrivacyTitle: "Your Data & Privacy",
+    dataPrivacyDesc1: "Your data is saved locally in this browser using secure local storage.",
+    dataPrivacyDesc2: "This means:",
+    privacyBullet1: "Your data stays on this device",
+    privacyBullet2: "Clearing browser data can remove your logs",
+    privacyBullet3: "Incognito/private mode will not retain data",
+    privacyBullet4: "Data does not automatically sync across devices",
+    backupRestoreTitle: "Backup & Restore",
+    backupRestoreDesc1: "downloads a JSON backup of your current Overtime-It data.",
+    backupRestoreDesc2: "restores a previously exported JSON file and replaces current app data.",
+    backupRoutine: "Recommended routine:",
+    routineBullet1: "Export weekly",
+    routineBullet2: "Export after major edits",
+    routineBullet3: "Store backups in two locations (e.g., Downloads + Drive/USB)",
+    buttonsExplainedTitle: "Buttons Explained",
+    storageKeysTitle: "Storage Keys (Advanced)",
+    appDataKey: "App data key",
+    sharedProfileKey: "Shared profile key",
+    notesLimitationsTitle: "Notes / Limitations",
+    note1: "Overtime-It is a tracking tool. Totals depend on the accuracy of the entries you provide.",
+    note2: "Use Export regularly to avoid data loss.",
+    supportFeedbackTitle: "Support / Feedback",
+    supportDesc: "If something breaks, include: device + browser + steps to reproduce + expected vs actual behaviour.",
+    descPreview: "Opens the print-ready view.",
+    descPrintPdf: "Prints only the preview sheet. Choose “Save as PDF” to create a file.",
+    descExport: "Downloads a JSON backup file.",
+    descImport: "Restores data from a JSON backup file.",
+    descCsv: "Downloads a CSV export for spreadsheets (Excel/Sheets).",
+    descExtra: "Extra tool for this app.",
+    overtimeReport: "Overtime Report",
+    employeeDeclaration: "Employee Declaration",
+    managementApproval: "Management Approval",
+    employeeSignature: "Employee Signature",
+    authorizedSignatory: "Authorized Signatory",
+    dateSigned: "Date Signed",
+    dateApproved: "Date Approved",
   },
   DE: {
     hub: "HUB",
@@ -193,6 +243,56 @@ const translations = {
     monthUnlocked: "Monat entsperrt",
     monthLockedToast: "Monat gesperrt",
     confirmDelete: "Diesen Eintrag löschen?",
+    helpPackTitle: "ToolStack • Hilfe-Paket v1",
+    howDataWorks: "Wie Ihre Daten funktionieren",
+    aboutAppTitle: "Über Overtime-It",
+    aboutAppDesc: "Overtime-It ist ein lokales Überstunden- und Zeiterfassungstool, mit dem Sie Stunden protokollieren, Summen berechnen und saubere, druckfertige Zusammenfassungen erstellen können. Es läuft vollständig in Ihrem Browser ohne Konten, Cloud-Speicher oder automatische Datenfreigabe.",
+    howItWorksTitle: "So funktioniert Overtime-It",
+    howItWorksDesc: "So funktioniert Overtime-It:",
+    step1: "1. Überstunden protokollieren",
+    step1Desc: "Fügen Sie Einträge mit Datum, Stunden, Satz und Multiplikator hinzu.",
+    step2: "2. Summen überprüfen",
+    step2Desc: "Overtime-It berechnet die Auszahlung basierend auf Ihren Einträgen.",
+    step3: "3. Vorschau & Drucken",
+    step3Desc: "Erstellen Sie mit der Vorschau einen druckfertigen Überstundenbericht.",
+    step4: "4. Backup exportieren",
+    step4Desc: "Exportieren Sie regelmäßig ein JSON-Backup.",
+    dataPrivacyTitle: "Ihre Daten & Privatsphäre",
+    dataPrivacyDesc1: "Ihre Daten werden lokal in diesem Browser mit sicherem lokalen Speicher gespeichert.",
+    dataPrivacyDesc2: "Das bedeutet:",
+    privacyBullet1: "Ihre Daten bleiben auf diesem Gerät",
+    privacyBullet2: "Das Löschen von Browserdaten kann Ihre Protokolle entfernen",
+    privacyBullet3: "Der Inkognito-/Privatmodus speichert keine Daten",
+    privacyBullet4: "Daten werden nicht automatisch zwischen Geräten synchronisiert",
+    backupRestoreTitle: "Sichern & Wiederherstellen",
+    backupRestoreDesc1: "lädt ein JSON-Backup Ihrer aktuellen Overtime-It-Daten herunter.",
+    backupRestoreDesc2: "stellt eine zuvor exportierte JSON-Datei wieder her und ersetzt die aktuellen App-Daten.",
+    backupRoutine: "Empfohlene Routine:",
+    routineBullet1: "Wöchentlich exportieren",
+    routineBullet2: "Nach größeren Bearbeitungen exportieren",
+    routineBullet3: "Sichern Sie Backups an zwei Orten (z. B. Downloads + Drive/USB)",
+    buttonsExplainedTitle: "Tasten erklärt",
+    storageKeysTitle: "Speicherschlüssel (Erweitert)",
+    appDataKey: "App-Datenschlüssel",
+    sharedProfileKey: "Geteilter Profilschlüssel",
+    notesLimitationsTitle: "Hinweise / Einschränkungen",
+    note1: "Overtime-It ist ein Tracking-Tool. Die Summen hängen von der Genauigkeit Ihrer Eingaben ab.",
+    note2: "Verwenden Sie regelmäßig Export, um Datenverlust zu vermeiden.",
+    supportFeedbackTitle: "Support / Feedback",
+    supportDesc: "Wenn etwas kaputt geht, geben Sie bitte an: Gerät + Browser + Schritte zur Reproduktion + erwartetes vs. tatsächliches Verhalten.",
+    descPreview: "Öffnet die druckfertige Ansicht.",
+    descPrintPdf: "Druckt nur das Vorschaublatt. Wählen Sie „Als PDF speichern“, um eine Datei zu erstellen.",
+    descExport: "Lädt eine JSON-Backup-Datei herunter.",
+    descImport: "Stellt Daten aus einer JSON-Backup-Datei wieder her.",
+    descCsv: "Öffnet einen CSV-Export für Tabellenkalkulationen (Excel/Sheets).",
+    descExtra: "Zusätzliches Tool für diese App.",
+    overtimeReport: "Überstundenbericht",
+    employeeDeclaration: "Selbstauskunft des Arbeitnehmers",
+    managementApproval: "Genehmigung der Geschäftsleitung",
+    employeeSignature: "Unterschrift Arbeitnehmer",
+    authorizedSignatory: "Zeichnungsberechtigter",
+    dateSigned: "Datum der Unterschrift",
+    dateApproved: "Datum der Genehmigung",
   }
 };
 
@@ -403,17 +503,17 @@ function HelpModal({ open, onClose, appName = "ToolStack App", storageKey = "(un
   );
 
   const baseActions = [
-    { name: t.preview, desc: "Opens the print-ready view." },
-    { name: t.printSavePdf, desc: "Prints only the preview sheet. Choose “Save as PDF” to create a file." },
-    { name: t.export, desc: "Downloads a JSON backup file." },
-    { name: "Import", desc: "Restores data from a JSON backup file." },
+    { name: t.preview, desc: t.descPreview },
+    { name: t.printSavePdf, desc: t.descPrintPdf },
+    { name: t.export, desc: t.descExport },
+    { name: t.importJson, desc: t.descImport },
   ];
 
   const extra = (actions || []).map((a) => ({
     name: a,
     desc: String(a).toLowerCase().includes("csv")
-      ? "Downloads a CSV export for spreadsheets (Excel/Sheets)."
-      : "Extra tool for this app.",
+      ? t.descCsv
+      : t.descExtra,
   }));
 
   return (
@@ -422,8 +522,8 @@ function HelpModal({ open, onClose, appName = "ToolStack App", storageKey = "(un
       <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
         <div className="p-5 border-b border-neutral-100 flex items-start justify-between gap-4 bg-white shrink-0">
             <div>
-              <div className="text-sm text-neutral-500">ToolStack • Help Pack v1</div>
-              <h2 className="text-lg font-semibold text-neutral-900">{appName} — how your data works</h2>
+              <div className="text-sm text-neutral-500">{t.helpPackTitle}</div>
+              <h2 className="text-lg font-semibold text-neutral-900">{appName} — {t.howDataWorks}</h2>
               <div className="mt-3 h-[2px] w-56 rounded-full bg-gradient-to-r from-[#D5FF00]/0 via-[#D5FF00] to-[#D5FF00]/0" />
             </div>
 
@@ -437,43 +537,43 @@ function HelpModal({ open, onClose, appName = "ToolStack App", storageKey = "(un
           </div>
 
           <div className="p-5 space-y-5 overflow-y-auto flex-1">
-            <Section title="About Overtime-It">
-              <p>Overtime-It is a local-first overtime and time tracking tool designed to help you log hours, calculate totals, and generate clean print-ready summaries. It runs entirely in your browser with no accounts, no cloud storage, and no automatic data sharing.</p>
+            <Section title={t.aboutAppTitle}>
+              <p>{t.aboutAppDesc}</p>
             </Section>
 
-            <Section title="How Overtime-It Works">
-              <p>Overtime-It follows a simple workflow:</p>
+            <Section title={t.howItWorksTitle}>
+              <p>{t.howItWorksDesc}</p>
               <ul className="space-y-1">
-                <Bullet><b>1. Log Overtime Entries</b><br/>Add entries with date, hours, rate, and multiplier.</Bullet>
-                <Bullet><b>2. Review Totals</b><br/>Overtime-It calculates payout based on your entries.</Bullet>
-                <Bullet><b>3. Preview & Print</b><br/>Generate a print-ready overtime report using Preview.</Bullet>
-                <Bullet><b>4. Export a Backup</b><br/>Export a JSON backup regularly.</Bullet>
+                <Bullet><b>{t.step1}</b><br/>{t.step1Desc}</Bullet>
+                <Bullet><b>{t.step2}</b><br/>{t.step2Desc}</Bullet>
+                <Bullet><b>{t.step3}</b><br/>{t.step3Desc}</Bullet>
+                <Bullet><b>{t.step4}</b><br/>{t.step4Desc}</Bullet>
               </ul>
             </Section>
 
-            <Section title="Your Data & Privacy">
-              <p>Your data is saved locally in this browser using secure local storage.</p>
-              <p>This means:</p>
+            <Section title={t.dataPrivacyTitle}>
+              <p>{t.dataPrivacyDesc1}</p>
+              <p>{t.dataPrivacyDesc2}</p>
               <ul className="space-y-1">
-                <Bullet>Your data stays on this device</Bullet>
-                <Bullet>Clearing browser data can remove your logs</Bullet>
-                <Bullet>Incognito/private mode will not retain data</Bullet>
-                <Bullet>Data does not automatically sync across devices</Bullet>
+                <Bullet>{t.privacyBullet1}</Bullet>
+                <Bullet>{t.privacyBullet2}</Bullet>
+                <Bullet>{t.privacyBullet3}</Bullet>
+                <Bullet>{t.privacyBullet4}</Bullet>
               </ul>
             </Section>
 
-            <Section title="Backup & Restore">
-              <p><b>Export</b> downloads a JSON backup of your current Overtime-It data.</p>
-              <p><b>Import</b> restores a previously exported JSON file and replaces current app data.</p>
-              <p>Recommended routine:</p>
+            <Section title={t.backupRestoreTitle}>
+              <p><b>{t.export}</b> {t.backupRestoreDesc1}</p>
+              <p><b>{t.importJson}</b> {t.backupRestoreDesc2}</p>
+              <p>{t.backupRoutine}</p>
               <ul className="space-y-1">
-                <Bullet>Export weekly</Bullet>
-                <Bullet>Export after major edits</Bullet>
-                <Bullet>Store backups in two locations (e.g., Downloads + Drive/USB)</Bullet>
+                <Bullet>{t.routineBullet1}</Bullet>
+                <Bullet>{t.routineBullet2}</Bullet>
+                <Bullet>{t.routineBullet3}</Bullet>
               </ul>
             </Section>
 
-            <Section title="Buttons Explained">
+            <Section title={t.buttonsExplainedTitle}>
               <div className="rounded-2xl border border-neutral-200 bg-white px-3">
                 {[...baseActions, ...extra].map((a) => (
                   <ActionRow key={a.name} name={a.name} desc={a.desc} />
@@ -481,22 +581,22 @@ function HelpModal({ open, onClose, appName = "ToolStack App", storageKey = "(un
               </div>
             </Section>
 
-            <Section title="Storage Keys (Advanced)">
+            <Section title={t.storageKeysTitle}>
               <div className="rounded-2xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-sm text-neutral-700 font-mono space-y-1">
-                <div>App data key: {storageKey}</div>
-                <div>Shared profile key: {PROFILE_KEY}</div>
+                <div>{t.appDataKey}: {storageKey}</div>
+                <div>{t.sharedProfileKey}: {PROFILE_KEY}</div>
               </div>
             </Section>
 
-            <Section title="Notes / Limitations">
+            <Section title={t.notesLimitationsTitle}>
               <ul className="space-y-1">
-                <Bullet>Overtime-It is a tracking tool. Totals depend on the accuracy of the entries you provide.</Bullet>
-                <Bullet>Use Export regularly to avoid data loss.</Bullet>
+                <Bullet>{t.note1}</Bullet>
+                <Bullet>{t.note2}</Bullet>
               </ul>
             </Section>
 
-            <Section title="Support / Feedback">
-              <p>If something breaks, include: device + browser + steps to reproduce + expected vs actual behaviour.</p>
+            <Section title={t.supportFeedbackTitle}>
+              <p>{t.supportDesc}</p>
             </Section>
           </div>
 
@@ -542,6 +642,7 @@ function normalizeState(raw) {
       useRange: false,
       filterFrom: startOfMonthISO(monthKey()),
       filterTo: endOfMonthISO(monthKey()),
+      timerStartAt: null,
     },
     lockedMonths: [], // ["YYYY-MM"]
     entries: [],
@@ -616,7 +717,7 @@ function saveState(state) {
   return next;
 }
 
-function ReportModal({ open, onClose, entries, profile, t }) {
+function ReportModal({ open, onClose, entries, profile, logo, storageKey, t }) {
   if (!open) return null;
   const [rangeType, setRangeType] = useState("week");
   const [targetDate, setTargetDate] = useState(isoToday());
@@ -634,7 +735,8 @@ function ReportModal({ open, onClose, entries, profile, t }) {
     filtered.forEach((e) => {
       totalHours += e.hours || 0;
     });
-    return { totalHours };
+    const daysLogged = new Set(filtered.map((e) => e.date)).size;
+    return { totalHours, daysLogged };
   }, [filtered]);
 
   const handleExport = () => {
@@ -668,37 +770,18 @@ function ReportModal({ open, onClose, entries, profile, t }) {
           </div>
         </div>
         <div className="flex-1 overflow-auto p-3 sm:p-6 bg-white rounded-b-2xl">
-          <div id="report-pack-print">
-            <div className="mb-6">
-              <div className="text-2xl font-bold text-neutral-900">{t.overtimePack}</div>
-              <div className="text-neutral-600">{range.label}</div>
-              <div className="text-sm text-neutral-500 mt-1">{profile.org} • {profile.user}</div>
-            </div>
-            <div className="mb-6 p-4 bg-neutral-50 rounded-xl border border-neutral-200">
-              <div className="text-sm font-semibold text-neutral-700 mb-2">{t.summary}</div>
-              <div className="flex flex-wrap gap-6">
-                <div>
-                  <div className="text-xs text-neutral-500">{t.totalHours}</div>
-                  <div className="text-xl font-bold text-neutral-900">{totals.totalHours.toFixed(2)}h</div>
-                </div>
-              </div>
-            </div>
-            <table className="w-full text-sm text-left">
-              <thead className="text-neutral-500 border-b border-neutral-200">
-                <tr><th className="py-2">{t.date}</th><th className="py-2">{t.start}</th><th className="py-2">{t.end}</th><th className="py-2">{t.duration}</th><th className="py-2">{t.details}</th><th className="py-2">{t.location}</th><th className="py-2">{t.address}</th></tr>
-              </thead>
-              <tbody className="divide-y divide-neutral-100">
-                {filtered.length === 0 && <tr><td colSpan={7} className="py-4 text-center text-neutral-500">{t.noEntriesRange}</td></tr>}
-                {filtered.map((e) => (
-                  <tr key={e.id}>
-                    <td className="py-2 font-medium">{e.date}</td><td className="py-2">{e.start}</td><td className="py-2">{e.end}</td><td className="py-2">{fmtHours(e.hours * 60)}</td>
-                    <td className="py-2 text-neutral-600">{e.details}</td>
-                    <td className="py-2 text-neutral-600">{e.location}</td>
-                    <td className="py-2 text-neutral-600">{e.address}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div id="print-area">
+            <ReportSheet
+              profile={profile}
+              month={targetDate.slice(0, 7)}
+              useRange={true}
+              range={{ from: range.start, to: range.end }}
+              totals={totals}
+              entries={filtered}
+              storageKey={storageKey || ""}
+              logo={logo}
+              t={t}
+            />
           </div>
         </div>
       </div>
@@ -751,13 +834,14 @@ export default function App() {
   const [profile, setProfile] = useState(loadProfile());
   const [state, setState] = useState(loadState());
 
-  // --- Stopwatch / Live Tracker State ---
-  const [timerStartAt, setTimerStartAt] = useState(null);
+  // Use the persisted timer state from the app state
+  const timerStartAt = state.ui.timerStartAt || null;
   const [elapsedTime, setElapsedTime] = useState(0);
 
   useEffect(() => {
     let timer;
     if (timerStartAt) {
+      setElapsedTime(Math.floor((Date.now() - timerStartAt) / 1000));
       timer = setInterval(() => {
         setElapsedTime(Math.floor((Date.now() - timerStartAt) / 1000));
       }, 1000);
@@ -765,7 +849,7 @@ export default function App() {
       setElapsedTime(0);
     }
     return () => clearInterval(timer);
-  }, [timerStartAt]);
+  }, [state.ui.timerStartAt]);
 
   const formatElapsed = (sec) => {
     const h = Math.floor(sec / 3600);
@@ -892,7 +976,7 @@ export default function App() {
 
   const handleStartTimer = () => {
     const now = new Date();
-    setTimerStartAt(now.getTime());
+    setState(s => saveState({ ...s, ui: { ...s.ui, timerStartAt: now.getTime() } }));
     setDate(isoToday());
     setStartTime(now.toTimeString().slice(0, 5));
     setEndTime("");
@@ -901,7 +985,7 @@ export default function App() {
   const handleStopTimer = () => {
     const now = new Date();
     setEndTime(now.toTimeString().slice(0, 5));
-    setTimerStartAt(null);
+    setState(s => saveState({ ...s, ui: { ...s.ui, timerStartAt: null } }));
   };
 
   const copyLastEntry = () => {
@@ -1125,46 +1209,104 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-50 text-neutral-800">
+    <div className="min-h-screen bg-neutral-50 text-neutral-800 pt-14 pb-24">
+      {/* Top Status Bar */}
+      <div className="fixed top-0 left-0 right-0 z-40 bg-neutral-900 text-white px-4 py-3 flex items-center justify-between border-b border-white/10 backdrop-blur-xl print:hidden shadow-lg">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5">
+            <div className="h-2 w-2 rounded-full bg-[#D5FF00] shadow-[0_0_8px_#D5FF00]" />
+            <span className="text-[10px] font-black uppercase tracking-widest">Overtime-It</span>
+          </div>
+          <span className="opacity-20 hidden sm:inline">/</span>
+          <span className="text-xs font-bold hidden sm:inline">{monthLabel(state.ui.activeMonth)}</span>
+        </div>
+
+        {/* Center: Progress & Timer */}
+        <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-4 w-full max-w-[120px] xs:max-w-xs md:max-w-md px-4">
+          {timerStartAt ? (
+            <div className="flex items-center gap-2 text-[#D5FF00] bg-white/5 px-3 py-1 rounded-full border border-[#D5FF00]/30 animate-in fade-in zoom-in-95 duration-300">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#D5FF00] animate-pulse" />
+              <span className="font-mono text-xs tabular-nums">{formatElapsed(elapsedTime)}</span>
+            </div>
+          ) : (
+            <div className="flex-1 flex items-center gap-3">
+              <div className="flex-1 h-1 bg-white/10 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-[#D5FF00] shadow-[0_0_10px_#D5FF00] transition-all duration-700" 
+                  style={{ width: `${Math.min(100, (totals.totalHours / 160) * 100)}%` }}
+                />
+              </div>
+              <span className="text-[9px] font-mono opacity-40 hidden md:inline">
+                {((totals.totalHours / 160) * 100).toFixed(0)}%
+              </span>
+            </div>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
+            <span className="px-2 py-0.5 rounded bg-[#D5FF00] text-black text-[10px] font-black uppercase tracking-tighter shadow-[0_0_10px_rgba(213,255,0,0.3)]">
+              {totals.totalHours.toFixed(2)}h
+            </span>
+            <span className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white/80 text-[10px] font-bold uppercase hidden xs:block">
+              {totals.daysLogged} {t.daysLabel}
+            </span>
+          </div>
+        </div>
+      </div>
+
       <style>{`
+        @page {
+          size: A4 portrait;
+          margin: 8mm;
+        }
+
         @media print {
-          @page { size: auto; margin: 5mm; }
-          body { background: white !important; margin: 0; padding: 0; }
-          .print\\:hidden { display: none !important; }
-          .print\\:shadow-none { box-shadow: none !important; }
-          .print\\:border-none { border: none !important; }
-          .print\\:p-0 { padding: 0 !important; }
-          #report-pack-print, #report-pack-print *, #ot-print-preview, #ot-print-preview * { 
-            visibility: visible !important; 
-            font-size: 12px !important;
+          html, body {
+            width: 210mm;
+            height: 297mm;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: white;
           }
-          #ot-print-preview th, #ot-print-preview td, #report-pack-print th, #report-pack-print td { 
-            padding: 4px 2px !important; 
+
+          body {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
           }
-          .mx-auto { max-width: 100% !important; }
-          .mt-4, .mt-6, .mb-6 { margin-top: 0.5rem !important; margin-bottom: 0.5rem !important; }
+
+          #print-area {
+            width: 100%;
+            max-width: 100%;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transform: scale(0.92);
+            transform-origin: top left;
+          }
+
+          #print-area * {
+            box-sizing: border-box;
+          }
+
+          button,
+          nav,
+          header,
+          footer,
+          .no-print,
+          .top-actions,
+          .help-button,
+          .export-modal,
+          .preview-modal-backdrop {
+            display: none !important;
+          }
         }
       `}</style>
 
-      {previewOpen ? (
-        <style>{`
-          @media print {
-            body * { visibility: hidden !important; }
-            #ot-print-preview, #ot-print-preview *, #report-pack-print, #report-pack-print * { visibility: visible !important; }
-            #ot-print-preview, #report-pack-print { 
-              position: absolute !important; 
-              left: 0; 
-              top: 0; 
-              width: 100%; 
-              page-break-inside: avoid;
-            }
-          }
-        `}</style>
-      ) : null}
-
       <HelpModal open={helpOpen} onClose={() => setHelpOpen(false)} appName="Overtime-It" storageKey={KEY} actions={["Export CSV"]} t={t} />
       
-      <ReportModal open={reportOpen} onClose={() => setReportOpen(false)} entries={entriesSorted} profile={profile} t={t} />
+      <ReportModal open={reportOpen} onClose={() => setReportOpen(false)} entries={entriesSorted} profile={profile} logo={overtimeHeading} storageKey={KEY} t={t} />
 
       <ExportMenuModal
         open={exportMenuOpen}
@@ -1186,13 +1328,13 @@ export default function App() {
       />
 
       {/* Preview Modal */}
-      {previewOpen ? (
+      {previewOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-8">
           <div className="absolute inset-0 bg-black/40" onClick={() => setPreviewOpen(false)} />
 
-          <div className="relative w-full max-w-5xl flex flex-col max-h-[95vh]">
-            <div className="mb-2 rounded-2xl bg-white border border-neutral-200 shadow-sm p-2 sm:p-3 flex items-center justify-between gap-3 shrink-0">
-              <div className="text-sm sm:text-lg font-semibold text-neutral-800 truncate">{t.printPreview}</div>
+          <div className="relative w-full max-w-5xl flex flex-col max-h-[95vh] bg-white rounded-2xl shadow-2xl overflow-hidden">
+            <div className="mb-2 rounded-t-2xl border-b border-neutral-200 shadow-sm p-2 sm:p-3 flex items-center justify-between gap-3 shrink-0 print:hidden">
+              <div className="text-sm sm:text-lg font-bold text-neutral-800 truncate">{t.printPreview}</div>
               <div className="flex items-center gap-1 sm:gap-2">
                 <button className={btnSecondary} onClick={() => window.print()}>
                   {t.printSavePdf}
@@ -1203,8 +1345,8 @@ export default function App() {
               </div>
             </div>
 
-            <div className="rounded-2xl bg-white border border-neutral-200 shadow-xl overflow-auto flex-1">
-              <div id="ot-print-preview" className="p-3 sm:p-6">
+            <div className="overflow-auto flex-1">
+              <div id="print-area" className="p-3 sm:p-6">
                 <ReportSheet
                   profile={profile}
                   month={state.ui.activeMonth}
@@ -1213,13 +1355,14 @@ export default function App() {
                   totals={totals}
                   entries={filtered}
                   storageKey={KEY}
+                  logo={overtimeHeading}
                   t={t}
                 />
               </div>
             </div>
           </div>
         </div>
-      ) : null}
+      )}
 
       <div className="max-w-6xl mx-auto p-4 sm:p-6">
         {/* Header */}
@@ -1230,17 +1373,7 @@ export default function App() {
               alt="Overtime-It"
               className="h-32 sm:h-40 lg:h-48 w-auto object-contain mix-blend-multiply"
             />
-            <div className="mt-3 flex flex-wrap gap-2">
-              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border border-lime-200 bg-lime-50 text-neutral-800">
-                {totals.totalHours.toFixed(2)}h {t.overtimeLabel}
-              </span>
-              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border border-neutral-200 bg-white text-neutral-800">
-                {totals.daysLogged} {t.daysLabel}
-              </span>
-            </div>
           </div>
-
-          {/* Top actions + pinned help icon */}
           <div className="w-full md:w-auto flex flex-wrap gap-2 self-start items-center justify-end">
             <div className="flex gap-2 mr-2">
               <LanguageButton label="EN" active={profile.language === "EN"} onClick={() => setProfile({ ...profile, language: "EN" })} />
@@ -1256,8 +1389,7 @@ export default function App() {
         </div>
 
         {/* Main grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-          {/* Left column */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mt-6">
           <div className="space-y-4">
             {/* Profile */}
             <div className="bg-white border border-neutral-200 rounded-2xl shadow-sm p-4 print:shadow-none">
@@ -1271,9 +1403,6 @@ export default function App() {
                   <div className="text-neutral-600">{t.user}</div>
                   <input className={inputBase} value={profile.user} onChange={(e) => setProfile({ ...profile, user: e.target.value })} />
                 </label>
-                <div className="pt-2 text-xs text-neutral-500">
-                  {t.storedAt} <span className="font-mono">{PROFILE_KEY}</span>
-                </div>
               </div>
             </div>
 
@@ -1290,19 +1419,6 @@ export default function App() {
                     onChange={(e) => setState((s) => saveState({ ...s, ui: { ...s.ui, activeMonth: e.target.value } }))}
                   />
                 </label>
-                <div className="mt-2 text-sm text-neutral-600">{monthLabel(state.ui.activeMonth)}</div>
-              </div>
-
-              <div className="mt-4 rounded-2xl border border-neutral-200 p-4">
-                <div className="flex items-center justify-between gap-3">
-                  <div>
-                    <div className="text-sm text-neutral-600">{t.totalHours}</div>
-                    <div className="text-2xl font-semibold text-neutral-900 mt-1">{totals.totalHours.toFixed(2)}h</div>
-                  </div>
-                </div>
-                <div className="mt-3 pt-3 border-t border-neutral-200 space-y-1">
-                  <div className="flex justify-between text-sm"><span className="text-neutral-600">{t.days}</span><span className="font-medium text-neutral-900">{totals.daysLogged}</span></div>
-                </div>
               </div>
 
               <div className="mt-4">
@@ -1327,35 +1443,17 @@ export default function App() {
                   </label>
                 </div>
 
-                {state.ui.useRange ? (
+                {state.ui.useRange && (
                   <div className="mt-3 grid grid-cols-2 gap-2">
-                    <label className="text-sm">
-                      <div className="text-neutral-600">{t.from}</div>
-                      <input
-                        type="date"
-                        className={inputBase}
-                        value={state.ui.filterFrom}
-                        onChange={(e) => setState((s) => saveState({ ...s, ui: { ...s.ui, filterFrom: e.target.value } }))}
-                      />
-                    </label>
-                    <label className="text-sm">
-                      <div className="text-neutral-600">{t.to}</div>
-                      <input
-                        type="date"
-                        className={inputBase}
-                        value={state.ui.filterTo}
-                        onChange={(e) => setState((s) => saveState({ ...s, ui: { ...s.ui, filterTo: e.target.value } }))}
-                      />
-                    </label>
+                    <input type="date" className={inputBase} value={state.ui.filterFrom} onChange={(e) => setState((s) => saveState({ ...s, ui: { ...s.ui, filterFrom: e.target.value } }))} />
+                    <input type="date" className={inputBase} value={state.ui.filterTo} onChange={(e) => setState((s) => saveState({ ...s, ui: { ...s.ui, filterTo: e.target.value } }))} />
                   </div>
-                ) : (
-                  <div className="mt-2 text-xs text-neutral-600">{t.showingAll}</div>
                 )}
               </div>
             </div>
           </div>
 
-          {/* Main */}
+          {/* Main Entries Section */}
           <div className="lg:col-span-3 flex flex-col gap-4">
             <div className="bg-white border border-neutral-200 rounded-2xl shadow-sm p-4 print:shadow-none">
             {/* Add / Edit entry */}
@@ -1557,8 +1655,8 @@ export default function App() {
         </div>
 
         {toast ? (
-          <div className="fixed bottom-6 right-6 rounded-2xl bg-neutral-800 text-white px-4 py-3 shadow-xl print:hidden">
-            <div className="text-sm">{toast}</div>
+          <div className="fixed bottom-16 right-6 z-50 rounded-2xl bg-neutral-800 text-white px-4 py-3 shadow-2xl border border-white/10 print:hidden animate-in fade-in slide-in-from-bottom-4">
+            <div className="text-sm font-medium">{toast}</div>
           </div>
         ) : null}
       </div>
@@ -1566,25 +1664,31 @@ export default function App() {
   );
 }
 
-function ReportSheet({ profile, month, useRange, range, totals, entries, storageKey }) {
+function ReportSheet({ profile, month, useRange, range, totals, entries, storageKey, logo, t }) {
   return (
-    <div className="mx-auto max-w-4xl print:max-w-none print:m-0 print:p-0">
+    <div className="mx-auto max-w-4xl print:max-w-none print:m-0 print:p-0 ReportSheet-container text-neutral-800">
       <div className="flex items-start justify-between gap-4">
-        <div>
-          <div className="text-2xl font-semibold text-neutral-900">Overtime Report</div>
-          <div className="text-sm text-neutral-600">{profile.org || "ToolStack"}</div>
-          <div className="mt-3 h-[2px] w-64 rounded-full bg-gradient-to-r from-lime-400/0 via-lime-400 to-emerald-400/0" />
+        <div className="flex items-start gap-4">
+          {logo && <img src={logo} alt="Logo" className="h-16 w-auto object-contain" />}
+          <div>
+          <div className="text-3xl font-bold text-black leading-none uppercase tracking-tight print:text-2xl">{t.overtimeReport}</div>
+            <div className="text-sm font-medium text-neutral-600 mt-1">{profile.org || "ToolStack"}</div>
+          <div className="mt-2 h-[1.5pt] w-48 bg-black print:block hidden" />
+          </div>
         </div>
-        <div className="text-sm text-neutral-600">Generated: {new Date().toLocaleString()}</div>
+        <div className="text-right text-xs text-neutral-500 font-serif">
+          <div>{t.generated}: {new Date().toLocaleDateString()}</div>
+          <div className="font-mono mt-1 opacity-50">{storageKey}</div>
+        </div>
       </div>
 
       <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3">
-        <div className="rounded-2xl border border-neutral-200 p-4">
-          <div className="text-sm text-neutral-600">Prepared by</div>
+        <div className="rounded-2xl border border-neutral-200 p-4 bg-neutral-50/50 print:border-black">
+          <div className="text-xs font-bold uppercase tracking-wider text-neutral-400">{t.preparedBy}</div>
           <div className="text-lg font-semibold text-neutral-900 mt-1">{profile.user || "—"}</div>
         </div>
-        <div className="rounded-2xl border border-neutral-200 p-4">
-          <div className="text-sm text-neutral-600">View</div>
+        <div className="rounded-2xl border border-neutral-200 p-4 bg-neutral-50/50 print:border-black">
+          <div className="text-xs font-bold uppercase tracking-wider text-neutral-400">{t.view}</div>
           <div className="text-sm text-neutral-900 mt-1">
             {useRange ? (
               <>
@@ -1595,24 +1699,24 @@ function ReportSheet({ profile, month, useRange, range, totals, entries, storage
             )}
           </div>
         </div>
-        <div className="rounded-2xl border border-neutral-200 p-4">
-          <div className="text-sm text-neutral-600">Overtime</div>
+        <div className="rounded-2xl border border-neutral-200 p-4 bg-neutral-50/50 print:border-black">
+          <div className="text-xs font-bold uppercase tracking-wider text-neutral-400">{t.overtime}</div>
           <div className="text-lg font-semibold text-neutral-900 mt-1">{totals.totalHours.toFixed(2)}h</div>
           <div className="text-xs text-neutral-600">
-            Days {totals.daysLogged}
+            {t.daysLabel} {totals.daysLogged}
           </div>
         </div>
       </div>
 
-      <div className="mt-4 overflow-hidden rounded-2xl border border-neutral-200">
+      <div className="mt-4 overflow-hidden rounded-2xl border border-neutral-200 print:rounded-none print:border-none">
         <table className="min-w-full text-sm">
           <thead className="bg-neutral-50">
             <tr>
-              <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-600">Date</th><th className="px-3 py-2 text-left text-xs font-semibold text-neutral-600">Start</th><th className="px-3 py-2 text-left text-xs font-semibold text-neutral-600">End</th>
-              <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-600">Duration</th>
-              <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-600">Details</th>
-              <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-600">Location</th>
-              <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-600">Address</th>
+              <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-600">{t.date}</th><th className="px-3 py-2 text-left text-xs font-semibold text-neutral-600">{t.start}</th><th className="px-3 py-2 text-left text-xs font-semibold text-neutral-600">{t.end}</th>
+              <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-600">{t.duration}</th>
+              <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-600">{t.details}</th>
+              <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-600">{t.location}</th>
+              <th className="px-3 py-2 text-left text-xs font-semibold text-neutral-600">{t.address}</th>
             </tr>
           </thead>
           <tbody>
@@ -1637,19 +1741,23 @@ function ReportSheet({ profile, month, useRange, range, totals, entries, storage
         </table>
       </div>
 
-      <div className="mt-6 grid grid-cols-2 gap-6 text-sm">
+      <div className="mt-12 grid grid-cols-2 gap-12 text-sm print:mt-24">
         <div>
-          <div className="text-neutral-600">Prepared by</div>
-          <div className="mt-8 border-t pt-2">Signature</div>
+          <div className="text-xs font-bold uppercase text-neutral-500 mb-1 print:text-black">{t.employeeDeclaration}</div>
+          <div className="mt-10 border-b border-black print:mt-16"></div>
+          <div className="mt-2 font-bold print:text-base">{profile.user || t.employeeSignature}</div>
+          <div className="text-[10px] text-neutral-400">{t.dateSigned}: ____/____/20____</div>
         </div>
         <div>
-          <div className="text-neutral-600">Approved by</div>
-          <div className="mt-8 border-t pt-2">Signature</div>
+          <div className="text-xs font-bold uppercase text-neutral-500 mb-1 print:text-black">{t.managementApproval}</div>
+          <div className="mt-10 border-b border-black print:mt-16"></div>
+          <div className="mt-2 font-bold print:text-base">{t.authorizedSignatory}</div>
+          <div className="text-[10px] text-neutral-400">{t.dateApproved}: ____/____/20____</div>
         </div>
       </div>
 
-      <div className="mt-6 text-xs text-neutral-500">
-        Storage key: <span className="font-mono">{storageKey}</span>
+      <div className="mt-6 text-xs text-neutral-500 print:hidden">
+        {t.storageKey}: <span className="font-mono">{storageKey}</span>
       </div>
     </div>
   );
